@@ -136,11 +136,12 @@ export default class Homescreen extends Component {
       if (response.status !== 200 && response.status !== 201) {
         throw new Error("Something happened on our end, try again later!");
       }
-      if (response.errors) {
-        throw new Error(errors.message);
-      }
 
       const result = await JSON.parse(await response.text());
+
+      if (result.errors) {
+        throw new Error(result.errors[0].message);
+      }
 
       this.props.navigation.navigate("Main", {
         token: result.data.login.token,
@@ -149,6 +150,7 @@ export default class Homescreen extends Component {
     } catch (error) {
       this.state.message = error.message;
       this.state.isLoading = false;
+      this.forceUpdate();
     }
   };
 }
