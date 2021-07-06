@@ -1,0 +1,36 @@
+// I did this all in ubunto on a widnwos system
+//Only if you havent done Mern A
+// in root
+//install node
+sudo apt-get update
+sudo apt-get install nodejs
+sudo apt-get install npm
+//update node
+sudo npm cache clean -f
+sudo npm install -g n
+sudo n stable
+// end of mern A stuff
+
+//the root directory
+sudo npm install expo-cli --global
+sudo ufw allow 19000/tcp   // i dont think this worked for me but it hasnt caused any problems.
+//directory you want app
+expo init Swype
+// to reach app directory
+cd Swype
+// in Swype directory
+npm start or expo start // It makes me use expo start now.
+
+// on phone install expo go
+// then in camra scan url to run curent build of app
+// also you can try setting up android studio but I failed.
+
+// in Swype directory
+sudo npm install react-navigation
+sudo npm install react-navigation-stack
+sudo npm install react-native-gesture-handler
+// if you get an error saying theirs a problems with react-screens
+npm i react-native-screens
+
+//now find folder were app is stored
+// take all files in git and replace the local ones with git files
