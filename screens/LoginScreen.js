@@ -136,6 +136,9 @@ export default class Homescreen extends Component {
       if (response.status !== 200 && response.status !== 201) {
         throw new Error("Something happened on our end, try again later!");
       }
+      if (response.errors) {
+        throw new Error(errors.message);
+      }
 
       const result = await JSON.parse(await response.text());
 
