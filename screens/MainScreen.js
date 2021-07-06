@@ -8,7 +8,7 @@ export default class Mainscreen extends Component {
     this.state = {
       token: "",
     };
-    console.log(route.params);
+    // console.log(route.params);
   }
   render() {
     return (
