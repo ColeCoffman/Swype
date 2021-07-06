@@ -1,10 +1,10 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React from "react";
+import { StyleSheet, Text, View } from "react-native";
 import { createStackNavigator } from "react-navigation-stack";
 import { createAppContainer } from "react-navigation";
 
-import LoginScreen from './screens/LoginScreen';
-import MainScreen from './screens/MainScreen';
+import LoginScreen from "./screens/LoginScreen";
+import MainScreen from "./screens/MainScreen";
 
 export default class App extends React.Component {
   render() {
@@ -12,26 +12,31 @@ export default class App extends React.Component {
   }
 }
 
-const AppNavigator = createStackNavigator({
-  Login: {
-    screen: LoginScreen
+const AppNavigator = createStackNavigator(
+  {
+    Login: {
+      screen: LoginScreen,
+    },
+    Main: {
+      screen: MainScreen,
+    },
   },
-  Main: {
-    screen: MainScreen
+  {
+    initialRouteName: "Login",
+    screenOptions: {
+      headerShown: false,
+    },
+    headerMode: "none",
   }
-},{
-  initialRouteName: "Login"
-});
+);
 
 const AppContainer = createAppContainer(AppNavigator);
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
-
-

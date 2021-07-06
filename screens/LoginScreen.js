@@ -1,103 +1,151 @@
-import React, { Component, useState } from 'react';
-import { ActivityIndicator, Button, View, Text, TextInput } from 'react-native';
+import React, { Component, useState } from "react";
+import {
+  ActivityIndicator,
+  Button,
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 
-global.localName = '';
-global.password = '';
-global.userId = -1;
-global.firstName = '';
-global.lastName = '';
-global.search = '';
-global.card = '';
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: "#fff",
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  image: {
+    marginBottom: 40,
+  },
+  inputView: {
+    backgroundColor: "#00ff",
+    borderRadius: 30,
+    width: "70%",
+    height: 45,
+    marginBottom: 20,
+    alignItems: "center",
+  },
+  TextInput: {
+    height: 50,
+    flex: 1,
+    padding: 10,
+    marginLeft: 20,
+  },
+  forgot_button: {
+    height: 30,
+    marginBottom: 30,
+  },
+  loginBtn: {
+    width: "80%",
+    borderRadius: 25,
+    height: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 40,
+    backgroundColor: "#007",
+  },
+  loginText: {
+    color: "white",
+  },
+  errorMessage: {
+    color: "red",
+    marginBottom: 10,
+  },
+});
+
+const AuthContext = React.createContext();
 
 export default class Homescreen extends Component {
-
-  constructor() 
-  {
-    super()
-    this.state = 
-    {
-       message: ' '
-    }
+  constructor(props) {
+    super(props);
+    this.state = {
+      message: "",
+      username: "",
+      password: "",
+      isLoading: false,
+    };
   }
 
-  render(){
-    return(
-      <View style={{ backgroundColor:'#0000ff', flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-
-      <View style={{alignItems: 'flex-end'}}>
-      <View style={{ flexDirection:'row' }}>
-        <Text style={{fontSize:20}}>Login Screen: </Text>
-        <TextInput
-          style={{height: 30,fontSize:20, backgroundColor:'#ffffff'}}
-          placeholder="Login Name"
-          onChangeText={(val) => { this.changeLoginNameHandler(val) }}
-        />        
-      </View>
-      <Text style={{fontSize:20}}> </Text>
-
-      <View style={{ flexDirection:'row' }}>
-        <Text style={{fontSize:20}}>Password: </Text>
-        <TextInput
-          style={{height: 30,fontSize:20, backgroundColor:'#ffffff'}}
-          placeholder="Password"
-          secureTextEntry={true}
-          onChangeText={(val) => { this.changePasswordHandler(val) }}
+  render() {
+    return (
+      // Container View
+      <View style={styles.container}>
+        <Image
+          style={{ width: 300, height: 200 }}
+          source={require("../assets/SwypeLogo.png")}
         />
-      </View>
-      <Text style={{fontSize:20}}>{this.state.message} </Text>
-      </View>
+        {this.state.message != "" && (
+          <Text style={styles.errorMessage}>{this.state.message}</Text>
+        )}
+        <View style={styles.inputView}>
+          <TextInput
+            style={styles.TextInput}
+            placeholder="Username"
+            placeholderTextColor="#fff"
+            onChangeText={(username) => this.setState({ username: username })}
+          />
+        </View>
 
-      <Button
-        title="Do Login"
-        onPress={this.handleClick}
-      />
-    </View>
+        <View style={styles.inputView}>
+          <TextInput
+            style={styles.TextInput}
+            placeholder="Password"
+            placeholderTextColor="#fff"
+            secureTextEntry={true}
+            onChangeText={(password) => this.setState({ password: password })}
+          />
+        </View>
+        <TouchableOpacity>
+          <Text style={styles.forgot_button}>Forgot Password?</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.loginBtn} onPress={this.loginHandler}>
+          {this.state.isLoading ? (
+            <ActivityIndicator />
+          ) : (
+            <Text style={styles.loginText}>LOGIN</Text>
+          )}
+        </TouchableOpacity>
+      </View>
     );
   }
 
-  handleClick = async () =>
-  {
-    try
-    {
-    // modify obj based on json message
-      var js = '{"query" : "query{ login(login:\\"' + global.loginName.trim() + '\\", password: \\"' + global.password.trim() + '\\") {userId, token, tokenExpiration} }"}';
-      //login:global.loginName.trim(),password:global.password.trim()
-      //var js = JSON.stringify(obj);
-    // modify link based on api
-      console.log(js);
-      const response = await fetch('https://largeproject.herokuapp.com/api',
-        {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
+  loginHandler = async () => {
+    try {
+      this.state.isLoading = true;
+      let requestBody = {
+        query: `
+              query {
+                  login(login: "${this.state.username}", password: "${this.state.password}") {
+                      userId
+                      token
+                      tokenExpiration
+                  }
+              }
+          `,
+      };
 
-      var res = JSON.parse(await response.text());
-      console.log(res); // return package
-      console.log(res.data.login);
-      console.log(res.data.login.userId);
-      if( res.data.login.userId <= 0 )
-      {
-        this.setState({message: "Usere/Password combination incorrect" });
+      const response = await fetch("http://largeproject.herokuapp.com/api", {
+        method: "POST",
+        body: JSON.stringify(requestBody),
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (response.status !== 200 && response.status !== 201) {
+        throw new Error("Something happened on our end, try again later!");
       }
-      else
-      {
-        global.firstName = res.firstName;
-        global.lastName = res.lastName;
-        global.userId = res.id;
-        this.props.navigation.navigate('Main');
-      }
+
+      const result = await JSON.parse(await response.text());
+
+      this.props.navigation.navigate("Main", {
+        token: result.data.login.token,
+      });
+      // console.log(result.data);
+    } catch (error) {
+      this.state.message = error.message;
+      this.state.isLoading = false;
     }
-    catch(e)
-    {
-      this.setState({message: e.message });
-    }
-  }  
-
-  changeLoginNameHandler = async (val) =>
-  {
-    global.loginName = val;
-  }  
-
-  changePasswordHandler = async (val) =>
-  {
-    global.password = val;
-  }  
-
+  };
 }
