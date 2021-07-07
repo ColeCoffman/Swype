@@ -5,6 +5,7 @@ import { createAppContainer } from "react-navigation";
 
 import LoginScreen from "./screens/LoginScreen";
 import MainScreen from "./screens/MainScreen";
+import RegisterScreen from "./screens/RegisterScreen";
 
 export default class App extends React.Component {
   render() {
@@ -19,6 +20,9 @@ const AppNavigator = createStackNavigator(
     },
     Main: {
       screen: MainScreen,
+    },
+    Register: {
+      screen: RegisterScreen,
     },
   },
   {
