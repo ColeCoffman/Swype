@@ -67,7 +67,8 @@ export default class Homescreen extends Component {
       message: "",
       username: "",
       email: "",
-      password: "",
+      password1: "",
+      password2: "",
       isLoading: false,
     };
   }
@@ -105,23 +106,32 @@ export default class Homescreen extends Component {
             placeholder="Password"
             placeholderTextColor="#fff"
             secureTextEntry={true}
-            onChangeText={(password) => this.setState({ password: password })}
+            onChangeText={(password1) =>
+              this.setState({ password1: password1 })
+            }
           />
         </View>
-        <TouchableOpacity>
-          <Text style={styles.forgot_button}>Forgot Password?</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.registerBtn} onPress={this.registerHandler}>
+        <View style={styles.inputView}>
+          <TextInput
+            style={styles.TextInput}
+            placeholder="Confirm Password"
+            placeholderTextColor="#fff"
+            secureTextEntry={true}
+            onChangeText={(password2) =>
+              this.setState({ password2: password2 })
+            }
+          />
+        </View>
+        <TouchableOpacity
+          style={styles.registerBtn}
+          onPress={this.registerHandler}
+        >
           {this.state.isLoading ? (
             <ActivityIndicator />
           ) : (
             <Text style={styles.registerText}>REGISTER</Text>
           )}
         </TouchableOpacity>
-        <Button
-          title="to login"
-          onPress={() => this.props.navigation.navigate("Login")}
-        />
       </View>
     );
   }
@@ -129,6 +139,18 @@ export default class Homescreen extends Component {
   registerHandler = async () => {
     try {
       this.state.isLoading = true;
+      if (this.state.username == "") {
+        this.state.isLoading = false;
+        throw new Error("Please enter a valid username");
+      }
+      if (this.state.email == "") {
+        this.state.isLoading = false;
+        throw new Error("Please enter a valid email address");
+      }
+      if (this.state.password1 !== this.state.password2) {
+        this.state.isLoading = false;
+        throw new Error("Passwords do not match");
+      }
       let requestBody = {
         query: `
             mutation {
@@ -142,7 +164,7 @@ export default class Homescreen extends Component {
       const response = await fetch("http://largeproject.herokuapp.com/api", {
         method: "POST",
         body: JSON.stringify(requestBody),
-        headers: { "Content-Type": "application/json"},
+        headers: { "Content-Type": "application/json" },
       });
       // for other requests pass the webtoken to the header
       // headers: { "Content-Type": "application/json", "Authorization", "Bearer" + \n + jontoken}

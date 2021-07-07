@@ -12,11 +12,9 @@ import {
 
 // storage method for cross screen
 // not very secure using global but it was easy. Any javascript in our code can acces it.
-global.name = '';
+global.name = "";
 global.userId = -1;
-global.token = '';
-
-
+global.token = "";
 
 const styles = StyleSheet.create({
   container: {
@@ -116,10 +114,21 @@ export default class Homescreen extends Component {
             <Text style={styles.loginText}>LOGIN</Text>
           )}
         </TouchableOpacity>
-        <Button
-          title="to register"
-          onPress={() => this.props.navigation.navigate("Register")}
-        />
+        <View
+          style={{
+            flexDirection: "row",
+            marginTop: 10,
+            alignContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Text style={{ marginTop: 4 }}>Don't have an account? </Text>
+          <TouchableOpacity
+            onPress={() => this.props.navigation.navigate("Register")}
+          >
+            <Text>Register Here</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
@@ -142,7 +151,7 @@ export default class Homescreen extends Component {
       const response = await fetch("http://largeproject.herokuapp.com/api", {
         method: "POST",
         body: JSON.stringify(requestBody),
-        headers: { "Content-Type": "application/json"},
+        headers: { "Content-Type": "application/json" },
       });
       // for other requests pass the webtoken to the header
       // headers: { "Content-Type": "application/json", "Authorization", "Bearer" + \n + jontoken}
@@ -169,7 +178,6 @@ export default class Homescreen extends Component {
         global.token = result.data.login.token;
         this.props.navigation.navigate("Main");
       }
-
     } catch (error) {
       this.state.message = error.message;
       this.state.isLoading = false;
