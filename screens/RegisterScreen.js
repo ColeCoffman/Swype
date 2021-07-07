@@ -10,13 +10,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-// storage method for cross screen
-// not very secure using global but it was easy. Any javascript in our code can acces it.
-global.name = '';
-global.userId = -1;
-global.token = '';
-
-
+// check login for global variables
 
 const styles = StyleSheet.create({
   container: {
@@ -46,7 +40,7 @@ const styles = StyleSheet.create({
     height: 30,
     marginBottom: 30,
   },
-  loginBtn: {
+  registerBtn: {
     width: "80%",
     borderRadius: 25,
     height: 50,
@@ -55,7 +49,7 @@ const styles = StyleSheet.create({
     marginTop: 40,
     backgroundColor: "#007",
   },
-  loginText: {
+  registerText: {
     color: "white",
   },
   errorMessage: {
@@ -72,6 +66,7 @@ export default class Homescreen extends Component {
     this.state = {
       message: "",
       username: "",
+      email: "",
       password: "",
       isLoading: false,
     };
@@ -96,7 +91,14 @@ export default class Homescreen extends Component {
             onChangeText={(username) => this.setState({ username: username })}
           />
         </View>
-
+        <View style={styles.inputView}>
+          <TextInput
+            style={styles.TextInput}
+            placeholder="Email"
+            placeholderTextColor="#fff"
+            onChangeText={(email) => this.setState({ email: email })}
+          />
+        </View>
         <View style={styles.inputView}>
           <TextInput
             style={styles.TextInput}
@@ -109,31 +111,29 @@ export default class Homescreen extends Component {
         <TouchableOpacity>
           <Text style={styles.forgot_button}>Forgot Password?</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.loginBtn} onPress={this.loginHandler}>
+        <TouchableOpacity style={styles.registerBtn} onPress={this.registerHandler}>
           {this.state.isLoading ? (
             <ActivityIndicator />
           ) : (
-            <Text style={styles.loginText}>LOGIN</Text>
+            <Text style={styles.registerText}>REGISTER</Text>
           )}
         </TouchableOpacity>
         <Button
-          title="to register"
-          onPress={() => this.props.navigation.navigate("Register")}
+          title="to login"
+          onPress={() => this.props.navigation.navigate("Login")}
         />
       </View>
     );
   }
 
-  loginHandler = async () => {
+  registerHandler = async () => {
     try {
       this.state.isLoading = true;
       let requestBody = {
         query: `
-              query {
-                  login(login: "${this.state.username}", password: "${this.state.password}") {
-                      userId
-                      token
-                      tokenExpiration
+            mutation {
+                createUser(userInput: {login: "${this.state.username}", email: "${this.state.email}", password: "${this.state.password}"}) {
+                      message
                   }
               }
           `,
@@ -152,24 +152,19 @@ export default class Homescreen extends Component {
       }
 
       const result = await JSON.parse(await response.text());
-      //var result = JSON.parse(await response.text());
-      console.log(result);
 
-      // error hadnling could use work
       if (result.errors) {
         throw new Error(result.errors[0].message);
       }
       // store token
-      if (result.data.login.userId <= 0) {
-        this.setState({ message: "Usere/Password combination incorrect" });
-      } else {
-        // set global variables for logged in use
-        global.userId = result.data.login.userId;
-        global.login = this.state.username;
-        global.token = result.data.login.token;
-        this.props.navigation.navigate("Main");
-      }
-
+      //storage.storeToken(result.data.login.token);
+      //this.props.navigation.navigate("Main", {
+      //  token: result.data.login.token,
+      //});
+      // console.log(result.data);
+      this.state.message = result.data.createUser.message;
+      this.state.isLoading = false;
+      this.forceUpdate();
     } catch (error) {
       this.state.message = error.message;
       this.state.isLoading = false;

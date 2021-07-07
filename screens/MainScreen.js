@@ -1,15 +1,16 @@
 import React, { Component } from "react";
 import { Button, View, Text } from "react-native";
 import { createStackNavigator, createAppContainer } from "react-navigation";
+// check login for avaiable global variables
 
 export default class Mainscreen extends Component {
-  constructor(props) {
+  /*constructor(props) {
     super(props);
     this.state = {
       token: "",
     };
-    // console.log(route.params);
-  }
+    //console.log(route.params);
+  }*/
   render() {
     return (
       <View
@@ -20,7 +21,7 @@ export default class Mainscreen extends Component {
           justifyContent: "center",
         }}
       >
-        <Text>Token: {this.state.token}</Text>
+        <Text>Token: {global.token}</Text>
         <Button
           title="To Login"
           onPress={() => this.props.navigation.navigate("Login")}
