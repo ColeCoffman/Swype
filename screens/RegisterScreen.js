@@ -154,7 +154,7 @@ export default class Homescreen extends Component {
       let requestBody = {
         query: `
             mutation {
-                createUser(userInput: {login: "${this.state.username}", email: "${this.state.email}", password: "${this.state.password}"}) {
+                createUser(userInput: {login: "${this.state.username}", email: "${this.state.email}", password: "${this.state.password1}"}) {
                       message
                   }
               }
