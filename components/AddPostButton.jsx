@@ -1,23 +1,18 @@
 import * as React from "react";
-import { TouchableOpacity, StyleSheet, Text } from "react-native";
+import { TouchableOpacity, StyleSheet, Text, View } from "react-native";
+// Using font awesome for the icon
+import{FontAwesome5, FontAwesome, MaterialIcons} from'@expo/vector-icons'
 
 export function HeaderButton() {
   return (
-    <TouchableOpacity style={styles.addPostBTN}>
-      <Text style={styles.Text}>Add Post</Text>
+    <TouchableOpacity >
+      <FontAwesome5 name = "plus-square" size = {35} color = "white"></FontAwesome5>
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
-  addPostBTN: {
-    width: "200%",
-    borderRadius: 25,
-    height: 30,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#007",
-  },
+
   Text: {
     color: "white",
   },
