@@ -35,7 +35,7 @@ const NavigationDrawerStructure = (props) => {
           source={{
             uri: "https://raw.githubusercontent.com/AboutReact/sampleresource/master/drawerWhite.png",
           }}
-          style={{ width: 25, height: 25, marginRight: 5 }}
+          style={{ width: 35, height: 35, marginRight: 5 }}
         />
       </TouchableOpacity>
     </View>
@@ -85,13 +85,18 @@ function mainScreenStack({ navigation }) {
         headerRight: () => (
           <NavigationDrawerStructure navigationProps={navigation} />
         ),
+        headerLeft: () => // Logo. Leads to main page. 
+        <TouchableOpacity onPress={() => navigation.navigate("Main")}><Image style={{flex: 1, height: 3, width: 80}}
+    resizeMode="contain" source={require('./assets/logo-sm.png')}></Image></TouchableOpacity>
+        ,
         headerStyle: {
-          backgroundColor: "#00ff", //Set Header color
+          backgroundColor: "#00ccff", //Set Header color
         },
         headerTintColor: "#fff", //Set Header text color
         headerTitleStyle: {
           fontWeight: "bold", //Set Header text style
         },
+        headerTitleAlign: "center",
       }}
     >
       <Stack.Screen
