@@ -1,46 +1,133 @@
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { createStackNavigator } from "react-navigation-stack";
-import { createAppContainer } from "react-navigation";
+import "react-native-gesture-handler";
 
+import * as React from "react";
+import { View, TouchableOpacity, Image } from "react-native";
+
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { createDrawerNavigator } from "@react-navigation/drawer";
+
+// Import Custom Sidebar
+import SidebarMenu from "./components/SidebarMenu";
+
+// Screens
 import LoginScreen from "./screens/LoginScreen";
-import MainScreen from "./screens/MainScreen";
 import RegisterScreen from "./screens/RegisterScreen";
+import MainScreen from "./screens/MainScreen";
 
-export default class App extends React.Component {
-  render() {
-    return <AppContainer />;
-  }
+// Add Post Button
+import { HeaderButton } from "./components/AddPostButton";
+
+const Stack = createStackNavigator();
+const Drawer = createDrawerNavigator();
+
+const NavigationDrawerStructure = (props) => {
+  //Structure for the navigatin Drawer
+  const toggleDrawer = () => {
+    //Props to open/close the drawer
+    props.navigationProps.toggleDrawer();
+  };
+
+  return (
+    <View style={{ flexDirection: "row" }}>
+      <TouchableOpacity onPress={toggleDrawer}>
+        <Image
+          source={{
+            uri: "https://raw.githubusercontent.com/AboutReact/sampleresource/master/drawerWhite.png",
+          }}
+          style={{ width: 25, height: 25, marginRight: 5 }}
+        />
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+// Login and Register Scren Stack
+function loginScreenStack({ navigation }) {
+  return (
+    <Stack.Navigator initialRouteName="Login">
+      <Stack.Screen
+        name="Login"
+        component={LoginScreen}
+        options={{
+          title: "Login", //Set Header Title
+          headerLeft: () => (
+            <NavigationDrawerStructure navigationProps={navigation} />
+          ),
+          headerStyle: {
+            backgroundColor: "#f4511e", //Set Header color
+          },
+          headerTintColor: "#fff", //Set Header text color
+          headerTitleStyle: {
+            fontWeight: "bold", //Set Header text style
+          },
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="Register"
+        component={RegisterScreen}
+        options={{
+          title: "Register", //Set Header Title
+          headerShown: false,
+        }}
+      />
+    </Stack.Navigator>
+  );
 }
 
-const AppNavigator = createStackNavigator(
-  {
-    Login: {
-      screen: LoginScreen,
-    },
-    Main: {
-      screen: MainScreen,
-    },
-    Register: {
-      screen: RegisterScreen,
-    },
-  },
-  {
-    initialRouteName: "Login",
-    screenOptions: {
-      headerShown: false,
-    },
-    headerMode: "none",
-  }
-);
+// Main Screen Stack
+function mainScreenStack({ navigation }) {
+  return (
+    <Stack.Navigator
+      initialRouteName="Main"
+      screenOptions={{
+        headerRight: () => (
+          <NavigationDrawerStructure navigationProps={navigation} />
+        ),
+        headerStyle: {
+          backgroundColor: "#00ff", //Set Header color
+        },
+        headerTintColor: "#fff", //Set Header text color
+        headerTitleStyle: {
+          fontWeight: "bold", //Set Header text style
+        },
+      }}
+    >
+      <Stack.Screen
+        name="Main"
+        component={MainScreen}
+        options={{
+          headerTitle: (props) => <HeaderButton {...props} />, //Set Header Title as add post button
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
 
-const AppContainer = createAppContainer(AppNavigator);
+function App() {
+  return (
+    <NavigationContainer>
+      <Drawer.Navigator
+        drawerContentOptions={{
+          activeTintColor: "#00ff",
+          itemStyle: { marginVertical: 5 },
+        }}
+        drawerContent={(props) => <SidebarMenu {...props} />}
+      >
+        <Drawer.Screen
+          name="loginScreenStack"
+          options={{ gestureEnabled: false }}
+          component={loginScreenStack}
+        />
+        <Drawer.Screen
+          name="mainScreenStack"
+          // initialParams={{ params: navigation.params }}
+          component={mainScreenStack}
+        />
+      </Drawer.Navigator>
+    </NavigationContainer>
+  );
+}
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
+export default App;
