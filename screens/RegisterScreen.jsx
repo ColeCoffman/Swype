@@ -14,7 +14,7 @@ import {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
+    backgroundColor: "#00ccff",
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   inputView: {
-    backgroundColor: "#00ff",
+    backgroundColor: "white",
     borderRadius: 30,
     width: "70%",
     height: 45,
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginTop: 40,
-    backgroundColor: "#007",
+    backgroundColor: "#0000cc",
   },
   registerText: {
     color: "white",
@@ -132,15 +132,17 @@ export default function RegisterScreen({ navigation }) {
     // Container View
     <View style={styles.container}>
       <Image
-        style={{ width: 300, height: 200 }}
-        source={require("../assets/SwypeLogo.png")}
+        style={{ width: 250, height: 200 }}
+        resizeMode="contain"
+        source={require("../assets/logo-lg.png")}
       />
       {message != "" && <Text style={styles.errorMessage}>{message}</Text>}
       <View style={styles.inputView}>
         <TextInput
           style={styles.TextInput}
           placeholder="Username"
-          placeholderTextColor="#fff"
+          placeholderTextColor="black"
+          autoCapitalize="none"
           onChangeText={(usernameInput) => setUsername(usernameInput)}
         />
       </View>
@@ -148,7 +150,8 @@ export default function RegisterScreen({ navigation }) {
         <TextInput
           style={styles.TextInput}
           placeholder="Email"
-          placeholderTextColor="#fff"
+          placeholderTextColor="black"
+          autoCapitalize="none"
           onChangeText={(emailInput) => setEmail(emailInput)}
         />
       </View>
@@ -156,8 +159,9 @@ export default function RegisterScreen({ navigation }) {
         <TextInput
           style={styles.TextInput}
           placeholder="Password"
-          placeholderTextColor="#fff"
+          placeholderTextColor="black"
           secureTextEntry={true}
+          autoCapitalize="none"
           onChangeText={(password1Input) => setPassword1(password1Input)}
         />
       </View>
@@ -165,8 +169,9 @@ export default function RegisterScreen({ navigation }) {
         <TextInput
           style={styles.TextInput}
           placeholder="Confirm Password"
-          placeholderTextColor="#fff"
+          placeholderTextColor="black"
           secureTextEntry={true}
+          autoCapitalize="none"
           onChangeText={(password2Input) => setPassword2(password2Input)}
         />
       </View>
