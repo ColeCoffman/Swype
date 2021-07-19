@@ -18,21 +18,21 @@ const config = {
   directionalOffsetThreshold: 80,
 };
 
-export default function PostScreen({ navigation }) {
-  const onSwipeUp = (gestureState) => {
-    navigation.navigate("mainScreenStack", { screen: "Comments" });
+export default function CommentsScreen({ navigation }) {
+  const onSwipeDown = (gestureState) => {
+    navigation.navigate("mainScreenStack", { screen: "Posts" });
   };
   return (
     // Container View
     <GestureRecognizer
-      onSwipeUp={(state) => onSwipeUp(state)}
+      onSwipeDown={(state) => onSwipeDown(state)}
       config={config}
       style={{
         flex: 1,
       }}
     >
       <View>
-        <Text>Post Screen</Text>
+        <Text>Comment Screen</Text>
       </View>
     </GestureRecognizer>
   );

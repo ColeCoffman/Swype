@@ -7,6 +7,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 
+import { CardStyleInterpolators } from "@react-navigation/stack";
+
 // Import Custom Sidebar
 import SidebarMenu from "./components/SidebarMenu";
 
@@ -18,6 +20,7 @@ import PostScreen from "./screens/PostScreen";
 
 // Add Post Button
 import { HeaderButton } from "./components/AddPostButton";
+import CommentsScreen from "./screens/CommentsScreen";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -104,6 +107,7 @@ function mainScreenStack({ navigation }) {
           fontWeight: "bold", //Set Header text style
         },
         headerTitleAlign: "center",
+        cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
       }}
     >
       <Stack.Screen
@@ -116,6 +120,13 @@ function mainScreenStack({ navigation }) {
       <Stack.Screen
         name="Posts"
         component={PostScreen}
+        options={{
+          headerTitle: (props) => <HeaderButton {...props} />, //Set Header Title as add post button
+        }}
+      />
+      <Stack.Screen
+        name="Comments"
+        component={CommentsScreen}
         options={{
           headerTitle: (props) => <HeaderButton {...props} />, //Set Header Title as add post button
         }}
