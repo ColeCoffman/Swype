@@ -65,6 +65,7 @@ export default function LoginScreen({ navigation }) {
         setPeristantData("login", username);
         setPeristantData("token", result.data.login.token);
         navigation.navigate("mainScreenStack", { screen: "Main" });
+        setIsLoading(false);
       }
     } catch (error) {
       setMessage(error.message);
@@ -117,7 +118,7 @@ export default function LoginScreen({ navigation }) {
         }}
       >
         <Text style={{ marginTop: 4 }}>Don't have an account? </Text>
-        <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+        <TouchableOpacity onPress={() => navigation.navigate("loginScreenStack", { screen: "Register" })}>
           <Text>Register Here</Text>
         </TouchableOpacity>
       </View>

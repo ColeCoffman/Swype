@@ -12,7 +12,7 @@ import {
 
 import { getPersistantData } from "../context/Storage";
 
-export default function MainScreen() {
+export default function MainScreen({ navigation }) {
   const [token, setToken] = useState("");
 
   // Get Token and set state
@@ -32,7 +32,7 @@ export default function MainScreen() {
       }}
     >
       <Text>Token: {token}</Text>
-      <Button title="To Login" onPress={() => navigation.navigate("Login")} />
+      <Button title="To Login" onPress={() => navigation.navigate("loginScreenStack", { screen: "Login" })} />
     </View>
   );
 }
