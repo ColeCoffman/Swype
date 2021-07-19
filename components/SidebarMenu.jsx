@@ -7,6 +7,8 @@ import {
   DrawerItemList,
   DrawerItem,
 } from "@react-navigation/drawer";
+import { useNavigation } from "@react-navigation/core";
+//import { useNavigation } from '@react-navigation/native';
 
 let login = "";
 getPersistantData("login")
@@ -35,9 +37,9 @@ const SidebarMenu = (props) => {
       </View>
       <DrawerContentScrollView {...props}>
         {/* <DrawerItemList {...props} /> */}
-        <DrawerItem label="POSTS" />
+        <DrawerItem label="POSTS" onPress={() => props.useNavigation.navigate("mainScreenStack", { screen: "Main" })}/>
         <DrawerItem label="COMMENTS" />
-        <DrawerItem label="LOGOUT" />
+        <DrawerItem label="LOGOUT" onPress={() => props.useNavigation.navigate("loginScreenStack", { screen: "Login" })}/>
       </DrawerContentScrollView>
       <Text
         style={{
