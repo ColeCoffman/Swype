@@ -1,4 +1,4 @@
-import React, { Component, useState } from "react";
+import React, { useState } from "react";
 import {
   ActivityIndicator,
   Button,
@@ -9,8 +9,125 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
+import { setPeristantData } from "../context/Storage";
 
-// check login for global variables
+export default function LoginScreen({ navigation }) {
+  // States
+  const [message, setMessage] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  // LoginHandler
+  const LoginHandler = async () => {
+    try {
+      setIsLoading(true);
+      let requestBody = {
+        query: `
+                query {
+                    login(login: "${username}", password: "${password}") {
+                        userId
+                        token
+                        tokenExpiration
+                    }
+                }
+            `,
+      };
+
+      const response = await fetch("http://largeproject.herokuapp.com/api", {
+        method: "POST",
+        body: JSON.stringify(requestBody),
+        headers: { "Content-Type": "application/json" },
+      });
+      // for other requests pass the webtoken to the header
+      // headers: { "Content-Type": "application/json", "Authorization", "Bearer" + \n + jontoken}
+
+      if (response.status !== 200 && response.status !== 201) {
+        throw new Error("Something happened on our end, try again later!");
+      }
+
+      const result = await JSON.parse(await response.text());
+      //var result = JSON.parse(await response.text());
+
+      //   console.log(result);
+
+      // error hadnling could use work
+      if (result.errors) {
+        throw new Error(result.errors[0].message);
+      }
+      // store token
+      if (result.data.login.userId <= 0) {
+        setMessage("User/Password combination incorrect");
+      } else {
+        // set global variables for logged in use
+
+        setPeristantData("userId", result.data.login.userId);
+        setPeristantData("login", username);
+        setPeristantData("token", result.data.login.token);
+        navigation.navigate("mainScreenStack", { screen: "Main" });
+        setIsLoading(false);
+      }
+    } catch (error) {
+      setMessage(error.message);
+      setIsLoading(false);
+      //   forceUpdate();
+    }
+  };
+  return (
+    // Container View
+    <View style={styles.container}>
+      <Image
+        style={{ width: 250, height: 200}} 
+        resizeMode="contain"
+        source={require("../assets/logo-lg.png")}
+      />
+      {message != "" && <Text style={styles.errorMessage}>{message}</Text>}
+      <View style={styles.inputView}>
+        <TextInput
+          style={styles.TextInput}
+          placeholder="Username"
+          placeholderTextColor="black"
+          autoCapitalize="none"
+          onChangeText={(usernameInput) => setUsername(usernameInput)}
+        />
+      </View>
+
+      <View style={styles.inputView}>
+        <TextInput
+          style={styles.TextInput}
+          placeholder="Password"
+          placeholderTextColor="black"
+          secureTextEntry={true}
+          autoCapitalize="none"
+          onChangeText={(passwordInput) => setPassword(passwordInput)}
+        />
+      </View>
+      <TouchableOpacity>
+        <Text style={styles.forgot_button}>Forgot Password?</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.loginBtn} onPress={() => LoginHandler()}>
+        {isLoading ? (
+          <ActivityIndicator />
+        ) : (
+          <Text style={styles.loginText}>LOGIN</Text>
+        )}
+      </TouchableOpacity>
+      <View
+        style={{
+          flexDirection: "row",
+          marginTop: 10,
+          alignContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Text style={{ marginTop: 4 }}>Don't have an account? </Text>
+        <TouchableOpacity onPress={() => navigation.navigate("loginScreenStack", { screen: "Register" })}>
+          <Text>Register Here</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -40,16 +157,16 @@ const styles = StyleSheet.create({
     height: 30,
     marginBottom: 30,
   },
-  registerBtn: {
+  loginBtn: {
     width: "80%",
     borderRadius: 25,
     height: 50,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 40,
+    marginTop: 20,
     backgroundColor: "#0000cc",
   },
-  registerText: {
+  loginText: {
     color: "white",
   },
   errorMessage: {
@@ -57,139 +174,3 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 });
-
-const AuthContext = React.createContext();
-
-export default function RegisterScreen({ navigation }) {
-  const [message, setMessage] = useState("");
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password1, setPassword1] = useState("");
-  const [password2, setPassword2] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
-  const RegisterHandler = async () => {
-    try {
-      setIsLoading(true);
-      if (username == "") {
-        setIsLoading(false);
-        throw new Error("Please enter a valid username");
-      }
-      if (email == "") {
-        setIsLoading(false);
-        throw new Error("Please enter a valid email address");
-      }
-      if (password1 !== password2) {
-        setIsLoading(false);
-        throw new Error("Passwords do not match");
-      }
-      let requestBody = {
-        query: `
-            mutation {
-                createUser(userInput: {login: "${username}", email: "${email}", password: "${password1}"}) {
-                      message
-                  }
-              }
-          `,
-      };
-
-      const response = await fetch("http://largeproject.herokuapp.com/api", {
-        method: "POST",
-        body: JSON.stringify(requestBody),
-        headers: { "Content-Type": "application/json" },
-      });
-      // for other requests pass the webtoken to the header
-      // headers: { "Content-Type": "application/json", "Authorization", "Bearer" + \n + jontoken}
-
-      if (response.status !== 200 && response.status !== 201) {
-        throw new Error("Something happened on our end, try again later!");
-      }
-
-      const result = await JSON.parse(await response.text());
-
-      if (result.errors) {
-        throw new Error(result.errors[0].message);
-      }
-      // store token
-      //storage.storeToken(result.data.login.token);
-      //this.props.navigation.navigate("Main", {
-      //  token: result.data.login.token,
-      //});
-      // console.log(result.data);
-      setMessage(result.data.createUser.message);
-      setIsLoading(false);
-      //this.state.message = result.data.createUser.message;
-      //this.state.isLoading = false;
-      //this.forceUpdate();
-    } catch (error) {
-      setMessage(error.message);
-      setIsLoading(false);
-      //this.forceUpdate();
-    }
-  };
-
-  return (
-    // Container View
-    <View style={styles.container}>
-      <Image
-        style={{ width: 250, height: 200 }}
-        resizeMode="contain"
-        source={require("../assets/logo-lg.png")}
-      />
-      {message != "" && <Text style={styles.errorMessage}>{message}</Text>}
-      <View style={styles.inputView}>
-        <TextInput
-          style={styles.TextInput}
-          placeholder="Username"
-          placeholderTextColor="black"
-          autoCapitalize="none"
-          onChangeText={(usernameInput) => setUsername(usernameInput)}
-        />
-      </View>
-      <View style={styles.inputView}>
-        <TextInput
-          style={styles.TextInput}
-          placeholder="Email"
-          placeholderTextColor="black"
-          autoCapitalize="none"
-          onChangeText={(emailInput) => setEmail(emailInput)}
-        />
-      </View>
-      <View style={styles.inputView}>
-        <TextInput
-          style={styles.TextInput}
-          placeholder="Password"
-          placeholderTextColor="black"
-          secureTextEntry={true}
-          autoCapitalize="none"
-          onChangeText={(password1Input) => setPassword1(password1Input)}
-        />
-      </View>
-      <View style={styles.inputView}>
-        <TextInput
-          style={styles.TextInput}
-          placeholder="Confirm Password"
-          placeholderTextColor="black"
-          secureTextEntry={true}
-          autoCapitalize="none"
-          onChangeText={(password2Input) => setPassword2(password2Input)}
-        />
-      </View>
-      <TouchableOpacity
-        style={styles.registerBtn}
-        onPress={() => RegisterHandler()}
-      >
-        {isLoading ? (
-          <ActivityIndicator />
-        ) : (
-          <Text style={styles.registerText}>REGISTER</Text>
-        )}
-      </TouchableOpacity>
-      <Text style={{ marginTop: 4 }}>Ready to Login? </Text>
-        <TouchableOpacity onPress={() => navigation.navigate("loginScreenStack", { screen: "Login" })}>
-          <Text>Login Here</Text>
-        </TouchableOpacity>
-    </View>
-  );
-
-}
