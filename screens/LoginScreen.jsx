@@ -77,15 +77,17 @@ export default function LoginScreen({ navigation }) {
     // Container View
     <View style={styles.container}>
       <Image
-        style={{ width: 300, height: 200 }}
-        source={require("../assets/SwypeLogo.png")}
+        style={{ width: 250, height: 200}} 
+        resizeMode="contain"
+        source={require("../assets/logo-lg.png")}
       />
       {message != "" && <Text style={styles.errorMessage}>{message}</Text>}
       <View style={styles.inputView}>
         <TextInput
           style={styles.TextInput}
           placeholder="Username"
-          placeholderTextColor="#fff"
+          placeholderTextColor="black"
+          autoCapitalize="none"
           onChangeText={(usernameInput) => setUsername(usernameInput)}
         />
       </View>
@@ -94,8 +96,9 @@ export default function LoginScreen({ navigation }) {
         <TextInput
           style={styles.TextInput}
           placeholder="Password"
-          placeholderTextColor="#fff"
+          placeholderTextColor="black"
           secureTextEntry={true}
+          autoCapitalize="none"
           onChangeText={(passwordInput) => setPassword(passwordInput)}
         />
       </View>
@@ -128,7 +131,7 @@ export default function LoginScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
+    backgroundColor: "#00ccff",
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -137,7 +140,7 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   inputView: {
-    backgroundColor: "#00ff",
+    backgroundColor: "white",
     borderRadius: 30,
     width: "70%",
     height: 45,
@@ -160,8 +163,8 @@ const styles = StyleSheet.create({
     height: 50,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 40,
-    backgroundColor: "#007",
+    marginTop: 20,
+    backgroundColor: "#0000cc",
   },
   loginText: {
     color: "white",
