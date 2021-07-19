@@ -14,6 +14,7 @@ import SidebarMenu from "./components/SidebarMenu";
 import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import MainScreen from "./screens/MainScreen";
+import PostScreen from "./screens/PostScreen";
 
 // Add Post Button
 import { HeaderButton } from "./components/AddPostButton";
@@ -85,10 +86,16 @@ function mainScreenStack({ navigation }) {
         headerRight: () => (
           <NavigationDrawerStructure navigationProps={navigation} />
         ),
-        headerLeft: () => // Logo. Leads to main page. 
-        <TouchableOpacity onPress={() => navigation.navigate("Main")}><Image style={{flex: 1, height: 3, width: 80}}
-    resizeMode="contain" source={require('./assets/logo-sm.png')}></Image></TouchableOpacity>
-        ,
+        headerLeft: () => (
+          // Logo. Leads to main page.
+          <TouchableOpacity onPress={() => navigation.navigate("Main")}>
+            <Image
+              style={{ flex: 1, height: 3, width: 80 }}
+              resizeMode="contain"
+              source={require("./assets/logo-sm.png")}
+            ></Image>
+          </TouchableOpacity>
+        ),
         headerStyle: {
           backgroundColor: "#00ccff", //Set Header color
         },
@@ -102,6 +109,13 @@ function mainScreenStack({ navigation }) {
       <Stack.Screen
         name="Main"
         component={MainScreen}
+        options={{
+          headerTitle: (props) => <HeaderButton {...props} />, //Set Header Title as add post button
+        }}
+      />
+      <Stack.Screen
+        name="Posts"
+        component={PostScreen}
         options={{
           headerTitle: (props) => <HeaderButton {...props} />, //Set Header Title as add post button
         }}
