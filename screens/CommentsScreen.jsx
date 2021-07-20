@@ -8,6 +8,9 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
+  FlatList,
+  SafeAreaView,
+  StatusBar,
 } from "react-native";
 import GestureRecognizer, {
   swipeDirections,
@@ -17,10 +20,27 @@ const config = {
   velocityThreshold: 0.3,
   directionalOffsetThreshold: 80,
 };
-
+// load in comment data using post ID
+/*const DATA{id, title} = {
+  {
+    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
+  },
+  {
+    id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
+  },
+  {
+    id: '58694a0f-3da1-471f-bd96-145571e29d72',
+  },
+};*/
+// load in end
 export default function CommentsScreen({ navigation }) {
+  const [comment, setComment] = useState("");
+  // pass it the array returned by api
+  const [allComments, setComments] = useState([]);
+  const [currentID, setID] = useState(null);
+
   const onSwipeDown = (gestureState) => {
-    navigation.navigate("mainScreenStack", { screen: "Posts" });
+    navigation.navigate("mainScreenStack", { screen: "Main" });
   };
   return (
     // Container View
@@ -31,7 +51,19 @@ export default function CommentsScreen({ navigation }) {
         flex: 1,
       }}
     >
-      <View>
+      <View style={styles.container}>
+        <View style={styles.inputView}>
+          <TextInput
+            style={styles.TextInput}
+            placeholder="Comment"
+            placeholderTextColor="black"
+            autoCapitalize="none"
+            onChangeText={(commentInput) => setComment(commentInput)}
+          />
+          <TouchableOpacity style={styles.commentBtn} /*onPress={() => LoginHandler()}api for creating comment*/>
+          <Text style={styles.commentText}>COMMENT</Text>
+          </TouchableOpacity>
+        </View>
         <Text>Comment Screen</Text>
       </View>
     </GestureRecognizer>
@@ -44,9 +76,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-  },
-  image: {
-    marginBottom: 40,
   },
   inputView: {
     backgroundColor: "#00ff",
@@ -62,11 +91,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginLeft: 20,
   },
-  forgot_button: {
-    height: 30,
-    marginBottom: 30,
-  },
-  loginBtn: {
+  commentBtn: {
     width: "80%",
     borderRadius: 25,
     height: 50,
@@ -75,7 +100,7 @@ const styles = StyleSheet.create({
     marginTop: 40,
     backgroundColor: "#007",
   },
-  loginText: {
+  commentText: {
     color: "white",
   },
   errorMessage: {

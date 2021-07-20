@@ -15,13 +15,24 @@ import { getPersistantData } from "../context/Storage";
 import BottomBar from "../components/BottomBar";
 import Swipes from "../components/Swipes";
 
+import GestureRecognizer, {
+  swipeDirections,
+} from "react-native-swipe-gestures";
+
+const config = {
+  velocityThreshold: 0.3,
+  directionalOffsetThreshold: 80,
+};
+
 let imagePath = require("../assets/placeholder3.jpg");
 
 
 export default function MainScreen({ navigation }) {
   const [token, setToken] = useState("");
   const swipesRef = useRef(null);
-
+  const onSwipeUp = (gestureState) => {
+    navigation.navigate("mainScreenStack", { screen: "Comments" });
+  };
   // Get Token and set state
   getPersistantData("token")
     .then((result) => {
@@ -30,15 +41,25 @@ export default function MainScreen({ navigation }) {
     .catch((err) => console.error(err));
 
   return (
-    <View style={styles.container}>
-      <View style ={styles.swipes}> 
-                  <Swipes>
-                  </Swipes>
+    // Container View
+    <GestureRecognizer
+      onSwipeUp={(state) => onSwipeUp(state)}
+      config={config}
+      style={{
+        flex: 1,
+      }}
+    >
+      <View style={styles.container}>
+        <View style ={styles.swipes}> 
+                    <Swipes>
+                    </Swipes>
+        </View>
+        <View>
+        <Text>Comment Screen</Text>
+          <BottomBar />
+        </View>
       </View>
-      <View>
-        <BottomBar />
-      </View>
-    </View>
+  </GestureRecognizer>    
   );
 }
 
