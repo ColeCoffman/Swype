@@ -11,14 +11,14 @@ import {
     TouchableOpacity,
   } from "react-native";
   
-  export default function BottomBar() {
+  export default function BottomBar({navigation}) {
       return (
         <View style={styles.container}>
         <View />
         <TouchableOpacity style={styles.button}>
           <FontAwesome name="times" size={27} color="#F06795"></FontAwesome>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("mainScreenStack", { screen: "Comments" })}>
           <FontAwesome5 name="comment-dots" size={27} color="black" ></FontAwesome5>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button}>
