@@ -143,7 +143,7 @@ export default function CommentsScreen({ navigation }) {
         renderItem={renderComment}
         keyExtractor={(item) => item.id}
         extraData={currentID}
-        onEndReached={this._handleLoadMore}
+        //onEndReached={this._handleLoadMore}
         />
     
       </SafeAreaView>
