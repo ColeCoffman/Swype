@@ -21,83 +21,177 @@ const config = {
   directionalOffsetThreshold: 80,
 };
 // load in comment data using post ID
-/*const DATA{id, title} = {
+const COMMENTS = [
   {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
+    id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
+    login: "test3",
+    comment: "wwewewwewewe",
+    upvotes: 59,
+    downvotes: 55,
+    replieNum: 23,
   },
   {
-    id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
+    id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f63",
+    login: "test323",
+    comment: "wwewewwewewe333",
+    upvotes: 529,
+    downvotes: 525,
+    replieNum: 26,
   },
   {
-    id: '58694a0f-3da1-471f-bd96-145571e29d72',
+    id: "58694a0f-3da1-471f-bd96-145571e29d72",
+    login: "tes77777",
+    comment: "wwew55555555333",
+    upvotes: 69,
+    downvotes: 65,
+    replieNum: 0,
   },
-};*/
+];
+
+/*const CommentItem = ({ comment, onPress, backgroundColor, textColor }) => (
+  <TouchableOpacity onPress={onPress} style={[styles.comment, backgroundColor]}>
+    <Text style={[styles.name, textColor]}>{comment.login}</Text>
+  </TouchableOpacity>
+);*/
+/*      <CommentItem style={styles.test}
+        comment={item}
+        onPress={() => setID(item.id)}
+        backgroundColor={{ backgroundColor }}
+        textColor={{ color }}
+      />*/
+
 // load in end
 export default function CommentsScreen({ navigation }) {
-  const [comment, setComment] = useState("");
+  const [newComment, setComment] = useState('');
   // pass it the array returned by api
-  const [allComments, setComments] = useState([]);
+  const [allComments, setComments] = useState(COMMENTS);
   const [currentID, setID] = useState(null);
+  
+  //coment flat list stuf start
 
+  const renderComment = ({ item }) => {
+    const backgroundColor = item.id === currentID ? "#6e3b6e" : "#f9c2ff";
+    const color = item.id === currentID ? 'white' : 'black';
+
+    return (
+      <View style={styles.comment}>
+      <Text style={styles.login}>{item.login}</Text>
+      <Text style={styles.bodyOfComment}>{item.comment}</Text>
+      <View style={styles.row}>
+        <Text /*replace with like icon also add on press api*/>upvotes: </Text>
+        <Text >{item.upvotes} </Text>
+        <Text /*replace with dislike icon*/>Downvotes: </Text>
+        <Text >{item.downvotes} </Text>
+        <Text >REPLY</Text>
+      </View>
+      <Text style={styles.seeReplies}>{item.replieNum} Replies</Text>
+      </View>
+    );
+  };
+  //coment flat list stuf end
   const onSwipeDown = (gestureState) => {
     navigation.navigate("mainScreenStack", { screen: "Main" });
   };
+  const addCommentHandler = async () => {
+    // sent api request to add comment here
+    // api
+    // api
+    // api
+    // update locally
+    // get id returned 
+    setComments(currentComments => [
+      ...currentComments,
+      {
+        id: Math.random().toString(),
+        login: "tes77777",
+        comment: newComment,
+        upvotes: 0,
+        downvotes: 0,
+        replieNum: 0,
+      }
+    ]);
+  }
   return (
     // Container View
-    <GestureRecognizer
+    <View>
+    {/*<GestureRecognizer
       onSwipeDown={(state) => onSwipeDown(state)}
       config={config}
       style={{
         flex: 1,
       }}
-    >
-      <View style={styles.container}>
-        <View style={styles.inputView}>
+    >*/}
+      <SafeAreaView style={styles.container}>
+        <View style={styles.row}>
           <TextInput
             style={styles.TextInput}
             placeholder="Comment"
-            placeholderTextColor="black"
+            //placeholderTextColor="black"
             autoCapitalize="none"
+            multiline
+            numberOfLines={5}
+            maxLength={256}
             onChangeText={(commentInput) => setComment(commentInput)}
           />
-          <TouchableOpacity style={styles.commentBtn} /*onPress={() => LoginHandler()}api for creating comment*/>
+          <TouchableOpacity style={styles.commentBtn} onPress={() => addCommentHandler()}>
           <Text style={styles.commentText}>COMMENT</Text>
           </TouchableOpacity>
         </View>
-        <Text>Comment Screen</Text>
-      </View>
-    </GestureRecognizer>
+
+        <FlatList
+        data={allComments}
+        renderItem={renderComment}
+        keyExtractor={(item) => item.id}
+        extraData={currentID}
+        onEndReached={this._handleLoadMore}
+        />
+    
+      </SafeAreaView>
+    {/*</GestureRecognizer>*/}
+  </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fff",
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    //flex: 1,
+    //alignItems: "center",
+    //justifyContent: "center",
+  },
+  row: {
+    //backgroundColor: "#fff",
+    flexDirection: "row"
+    //flex: 1,
+    //alignItems: "center",
+    //justifyContent: "center",
   },
   inputView: {
-    backgroundColor: "#00ff",
-    borderRadius: 30,
+    backgroundColor: "#fff",
+    borderRadius: 10,
     width: "70%",
-    height: 45,
+    height: 10,
     marginBottom: 20,
     alignItems: "center",
   },
   TextInput: {
-    height: 50,
+    height: 60,
     flex: 1,
     padding: 10,
-    marginLeft: 20,
+    marginTop: 10,
+    marginBottom: 10,
+    marginLeft: 10,
+    //multiline=true
   },
   commentBtn: {
-    width: "80%",
+    width: "20%",
     borderRadius: 25,
-    height: 50,
+    height: 60,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 40,
+    marginTop: 10,
+    marginBottom: 10,
+    marginRight: 10,
     backgroundColor: "#007",
   },
   commentText: {
@@ -107,4 +201,22 @@ const styles = StyleSheet.create({
     color: "red",
     marginBottom: 10,
   },
+  comment: {
+    padding: 10,
+  },
+  name: {
+    color: "black",
+    fontSize: 18,
+  },
+  bodyOfComment: {
+    color: "black",
+    fontSize: 12,
+  },
+  seeReplies: {
+    color: "blue",
+  },
+  test: {
+    width: 20,
+    marginRight: 90
+  }
 });
