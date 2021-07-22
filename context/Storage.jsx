@@ -11,7 +11,7 @@ export async function getPersistantData(key) {
   }
 }
 
-export async function setPeristantData(key, value) {
+export async function setPersistantData(key, value) {
   try {
     await AsyncStorage.setItem(key, value);
     console.log("Saved '" + key + "' to local storage! (" + value + ")");
