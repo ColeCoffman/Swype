@@ -102,7 +102,7 @@ export default function LoginScreen({ navigation }) {
           onChangeText={(passwordInput) => setPassword(passwordInput)}
         />
       </View>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate("loginScreenStack", { screen: "ForgetPassword" })}>
         <Text style={styles.forgot_button}>Forgot Password?</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.loginBtn} onPress={() => LoginHandler()}>

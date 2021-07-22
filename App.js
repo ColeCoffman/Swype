@@ -17,6 +17,7 @@ import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import MainScreen from "./screens/MainScreen";
 import PostScreen from "./screens/PostScreen";
+import ForgetPasswordScreen from "./screens/ForgetPasswordScreen";
 
 // Add Post Button
 import { HeaderButton } from "./components/AddPostButton";
@@ -73,6 +74,14 @@ function loginScreenStack({ navigation }) {
         component={RegisterScreen}
         options={{
           title: "Register", //Set Header Title
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="ForgetPassword"
+        component={ForgetPasswordScreen}
+        options={{
+          title: "ForgetPassword", //Set Header Title
           headerShown: false,
         }}
       />
