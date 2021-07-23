@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { SafeAreaView, View, StyleSheet, Image, Text } from "react-native";
-import { getPersistantData } from "../context/Storage";
+import { getPersistantData, setPersistantData } from "../context/Storage";
 
 import {
   DrawerContentScrollView,
@@ -14,6 +14,13 @@ getPersistantData("login")
     login = result;
   })
   .catch((err) => console.error(err));
+
+const logoutHandler = async () => {
+  setPersistantData("userId", "");
+  setPersistantData("login", "");
+  setPersistantData("token", "");
+  setPersistantData("password", "");
+};
 
 const SidebarMenu = (props) => {
   return (
@@ -44,11 +51,12 @@ const SidebarMenu = (props) => {
         <DrawerItem label="COMMENTS" />
         <DrawerItem
           label="LOGOUT"
-          onPress={() =>
-            props.useNavigation.navigate("loginScreenStack", {
+          onPress={async () => {
+            logoutHandler();
+            props.navigation.navigate("loginScreenStack", {
               screen: "Login",
-            })
-          }
+            });
+          }}
         />
       </DrawerContentScrollView>
       <Text

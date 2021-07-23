@@ -13,6 +13,8 @@ import GestureRecognizer, {
   swipeDirections,
 } from "react-native-swipe-gestures";
 
+import { getPersistantData } from "../context/Storage";
+
 const config = {
   velocityThreshold: 0.3,
   directionalOffsetThreshold: 80,
@@ -22,6 +24,15 @@ export default function PostScreen({ navigation }) {
   const onSwipeUp = (gestureState) => {
     navigation.navigate("mainScreenStack", { screen: "Comments" });
   };
+
+  const [token, setToken] = useState("");
+
+  getPersistantData("token")
+    .then((result) => {
+      setToken(result);
+    })
+    .catch((err) => console.error(err));
+
   return (
     // Container View
     <GestureRecognizer
@@ -33,6 +44,7 @@ export default function PostScreen({ navigation }) {
     >
       <View>
         <Text>Post Screen</Text>
+        <Text>TOKEN: {token}</Text>
       </View>
     </GestureRecognizer>
   );

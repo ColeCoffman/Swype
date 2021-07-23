@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ActivityIndicator,
   Button,
@@ -9,7 +9,7 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import { setPersistantData } from "../context/Storage";
+import { setPersistantData, getPersistantData } from "../context/Storage";
 
 export default function LoginScreen({ navigation }) {
   // States
@@ -18,8 +18,38 @@ export default function LoginScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  // This runs automatically on render
+
+  useEffect(() => {
+    async function checkLogin() {
+      // Anything in here is fired on component mount.
+      // Check Login
+      let storedUser = "",
+        storedPass = "";
+      await getPersistantData("login")
+        .then((result) => {
+          storedUser = result;
+        })
+        .catch((err) => console.error(err));
+
+      // Check Password
+      await getPersistantData("password")
+        .then((result) => {
+          storedPass = result;
+        })
+        .catch((err) => console.error(err));
+
+      if (storedPass && storedUser) {
+        await LoginHandler(storedUser, storedPass);
+      }
+
+      // console.log(storedUser, storedPass);
+    }
+    checkLogin();
+  }, []);
+
   // LoginHandler
-  const LoginHandler = async () => {
+  const LoginHandler = async (username, password) => {
     try {
       setIsLoading(true);
       let requestBody = {
@@ -64,6 +94,7 @@ export default function LoginScreen({ navigation }) {
         setPersistantData("userId", result.data.login.userId);
         setPersistantData("login", username);
         setPersistantData("token", result.data.login.token);
+        setPersistantData("password", password);
         navigation.navigate("mainScreenStack", { screen: "Main" });
         setIsLoading(false);
       }
@@ -77,7 +108,7 @@ export default function LoginScreen({ navigation }) {
     // Container View
     <View style={styles.container}>
       <Image
-        style={{ width: 250, height: 200}} 
+        style={{ width: 250, height: 200 }}
         resizeMode="contain"
         source={require("../assets/logo-lg.png")}
       />
@@ -102,10 +133,17 @@ export default function LoginScreen({ navigation }) {
           onChangeText={(passwordInput) => setPassword(passwordInput)}
         />
       </View>
-      <TouchableOpacity onPress={() => navigation.navigate("loginScreenStack", { screen: "ForgetPassword" })}>
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate("loginScreenStack", { screen: "ForgetPassword" })
+        }
+      >
         <Text style={styles.forgot_button}>Forgot Password?</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.loginBtn} onPress={() => LoginHandler()}>
+      <TouchableOpacity
+        style={styles.loginBtn}
+        onPress={() => LoginHandler(username, password)}
+      >
         {isLoading ? (
           <ActivityIndicator />
         ) : (
@@ -121,7 +159,11 @@ export default function LoginScreen({ navigation }) {
         }}
       >
         <Text style={{ marginTop: 4 }}>Don't have an account? </Text>
-        <TouchableOpacity onPress={() => navigation.navigate("loginScreenStack", { screen: "Register" })}>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("loginScreenStack", { screen: "Register" })
+          }
+        >
           <Text>Register Here</Text>
         </TouchableOpacity>
       </View>
