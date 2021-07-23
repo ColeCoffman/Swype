@@ -9,7 +9,7 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import { setPeristantData } from "../context/Storage";
+import { setPersistantData } from "../context/Storage";
 
 export default function LoginScreen({ navigation }) {
   // States
@@ -61,9 +61,9 @@ export default function LoginScreen({ navigation }) {
       } else {
         // set global variables for logged in use
 
-        setPeristantData("userId", result.data.login.userId);
-        setPeristantData("login", username);
-        setPeristantData("token", result.data.login.token);
+        setPersistantData("userId", result.data.login.userId);
+        setPersistantData("login", username);
+        setPersistantData("token", result.data.login.token);
         navigation.navigate("mainScreenStack", { screen: "Main" });
         setIsLoading(false);
       }
