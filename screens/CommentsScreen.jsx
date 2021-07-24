@@ -126,15 +126,52 @@ const COMMENTS = [
       />*/
 
 // load in end
+//let newComments = true;
 export default function CommentsScreen({ navigation }) {
-  //loadComments();
+  const [newComments, setNewComments] = useState("0");;
+  getPersistantData("newComments")
+  .then((result) => {
+    setNewComments(result);
+  })
+  .catch((err) => console.error(err));
+  //let newComments = true;
+  //console.log(newComments)
+  //setNewComments(false);
+
+  const [token, setToken] = useState("");
+  const [postId, setPostId] = useState("");
   const COMMENTS = [];
-  /*const loadComments = async () => {
+  // get token
+  //const [token, setToken] = useState("");
+  if (newComments === "1") {
+  getPersistantData("token")
+  .then((result) => {
+    setToken(result);
+  })
+  .catch((err) => console.error(err));
+  console.log("TokenLoadedInComments: " + token);
+  // placeholder setPers
+  setPersistantData("postId", "60f9d295ab3c97001559286a");
+  //const [postId, setPostId] = useState("");
+  getPersistantData("postId")
+  .then((result) => {
+    setPostId(result);
+  })
+  .catch((err) => console.error(err));
+  console.log("PostIdLoadedInComments: " + postId);
+  //setNewComments(false);
+  //newComments = false;
+  setPersistantData("newComments", "0");
+  
+//setNewComments(false);
+  //loadComments();
+  //const COMMENTS = [];
+  const loadComments = async () => {
     try {
       let requestBody = {
         query: `
                 query {
-                    getPostComments(postId: "60f8be0511f48a0015d507a0") {
+                    getPostComments(postId: "${postId}") {
                       _id
                       commenter{ login }
                       Content
@@ -144,8 +181,8 @@ export default function CommentsScreen({ navigation }) {
                 }
             `,
       };
-      const token = getPersistantData(token);
-      console.log(token);
+      //const token = getPersistantData(token);
+      console.log("laod comments toekn" + token);
       const response = await fetch("http://largeproject.herokuapp.com/api", {
             method: "POST",
             body: JSON.stringify(requestBody),
@@ -165,18 +202,19 @@ export default function CommentsScreen({ navigation }) {
           comment: result.data.getPostComments[i].Content,
           upvotes: result.data.getPostComments[i].upvotes,
           downvotes: result.data.getPostComments[i].downvotes,
-          replieNum: 0,
         };
-        console.log(loadedComment);
+        //console.log(loadedComment);
         COMMENTS.push(loadedComment);   
       }
       //not returning a token
-      //setPersistantData("token", result.extensions.token);
+      setPersistantData("token", result.extensions.token);
       console.log("got all comments");
     } catch (error) {
         console.log(error.message);
       } 
-  }*/
+  }
+  loadComments();
+} // end of what to load when page opens
   //loadComments();
   const [allComments, setComments] = useState(COMMENTS);
 
@@ -184,7 +222,8 @@ export default function CommentsScreen({ navigation }) {
   // pass it the array returned by api
   const [allReplies, setReplies] = useState([]);
   const [currentID, setID] = useState(null);
-  const [token, setToken] = useState("");
+
+
   //coment flat list stuf start
 
   const renderComment = ({ item }) => {
@@ -210,10 +249,10 @@ export default function CommentsScreen({ navigation }) {
   const onSwipeDown = (gestureState) => {
     navigation.navigate("mainScreenStack", { screen: "Main" });
   };
+  
   const addCommentHandler = async () => {
     // sent api request to add comment here
     try {
-      //let postId = getPersistantData()
       let requestBody = {
         query: `
                 mutation {
@@ -224,29 +263,21 @@ export default function CommentsScreen({ navigation }) {
                 }
             `,
       };
-      //const token = getPersistantData("token");
-      //let token = "";
-      getPersistantData("token")
-        .then((result) => {
-        setToken(result);
-        })
-        .catch((err) => console.error(err));
 
-      console.log("token used:" + JSON.stringify(token));
-      console.log("token used:" + token);
-      console.log("token used:" + getPersistantData("token"));
+;
       const response = await fetch("http://largeproject.herokuapp.com/api", {
             method: "POST",
             body: JSON.stringify(requestBody),
             headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token},
           });
-          console.log( {"Content-Type": "application/json", "Authorization": "Bearer " + token});
+  
       if (response.status !== 200 && response.status !== 201) {
         throw new Error("Something happened on our end, try again later!");
       }
   
       const result = await JSON.parse(await response.text());
       console.log(result);
+      // update locally
       setComments(currentComments => [
         ...currentComments,
         {
@@ -255,28 +286,16 @@ export default function CommentsScreen({ navigation }) {
           comment: newComment,
           upvotes: 0,
           downvotes: 0,
-          replieNum: 0,
         }
       ]);
-      //not returning a token
-      //setPersistantData("token", result.extensions.token);
+      setPersistantData("token", result.extensions.token);
+      setToken(result.extensions.token);
+
       console.log("added comment");
     } catch (error) {
         console.log(error.message);
       } 
-    // update locally
-    // get id returned 
-    /*setComments(currentComments => [
-      ...currentComments,
-      {
-        id: Math.random().toString(),
-        login: "tes77777",
-        comment: newComment,
-        upvotes: 0,
-        downvotes: 0,
-        replieNum: 0,
-      }
-    ]);*/
+
   }
   return (
     // Container View
