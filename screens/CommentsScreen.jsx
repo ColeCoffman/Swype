@@ -22,96 +22,7 @@ const config = {
   velocityThreshold: 0.3,
   directionalOffsetThreshold: 80,
 };
-// load in comment data using post ID
-/*const COMMENTS = []; // [id, login, comment, upvotes, downvotes, replieNum];
-//const [allComments, setComments] = useState([id, login, comment, upvotes, downvotes, replieNum]);
-const loadComments = async () => {
-  try {
-    let requestBody = {
-      query: `
-              query {
-                  getPostComments(postId: "60f8be0511f48a0015d507a0") {
-                    _id
-                    commenter{ login }
-                    Content
-                    upvotes
-                    downvotes
-                  }
-              }
-          `,
-    };
-    const token = getPersistantData(token);
-    const response = await fetch("http://largeproject.herokuapp.com/api", {
-          method: "POST",
-          body: JSON.stringify(requestBody),
-          headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token},
-        });
-    if (response.status !== 200 && response.status !== 201) {
-      throw new Error("Something happened on our end, try again later!");
-    }
 
-    const result = await JSON.parse(await response.text());
-    console.log(result);
-    const length = result.data.getPostComments.length;
-    for (let i=0; i<length; i++) {
-      let loadedComment = {
-        id: result.data.getPostComments[i]._id,
-        login: result.data.getPostComments[i].commenter.login,
-        comment: result.data.getPostComments[i].Content,
-        upvotes: result.data.getPostComments[i].upvotes,
-        downvotes: result.data.getPostComments[i].downvotes,
-        replieNum: 0,
-      };
-      console.log(loadedComment);
-      COMMENTS.push(loadedComment);   
-      /*setComments(currentComments => [
-        ...currentComments,
-        {
-          id: result.data.getPostComments[i]._id,
-          login: result.data.getPostComments[i].commenter.login,
-          comment: result.data.getPostComments[i].Content,
-          upvotes: result.data.getPostComments[i].upvotes,
-          downvotes: result.data.getPostComments[i].downvotes,
-          replieNum: 0,
-        }
-      ]);
-    }
-    //not returning a token
-    //setPersistantData("token", result.extensions.token);
-    console.log("got all comments");
-  } catch (error) {
-      console.log(error.message);
-    } 
-  }
-loadComments();
-*/
-/*
-const COMMENTS = [
-  {
-    id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
-    login: "test3",
-    comment: "wwewewwewewe",
-    upvotes: 59,
-    downvotes: 55,
-    replieNum: 23,
-  },
-  {
-    id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f63",
-    login: "test323",
-    comment: "wwewewwewewe333",
-    upvotes: 529,
-    downvotes: 525,
-    replieNum: 26,
-  },
-  {
-    id: "58694a0f-3da1-471f-bd96-145571e29d72",
-    login: "tes77777",
-    comment: "wwew55555555333",
-    upvotes: 69,
-    downvotes: 65,
-    replieNum: 0,
-  },
-];*/
 
 /*const CommentItem = ({ comment, onPress, backgroundColor, textColor }) => (
   <TouchableOpacity onPress={onPress} style={[styles.comment, backgroundColor]}>
@@ -181,8 +92,7 @@ export default function CommentsScreen({ navigation }) {
                 }
             `,
       };
-      //const token = getPersistantData(token);
-      console.log("laod comments toekn" + token);
+
       const response = await fetch("http://largeproject.herokuapp.com/api", {
             method: "POST",
             body: JSON.stringify(requestBody),
@@ -196,6 +106,8 @@ export default function CommentsScreen({ navigation }) {
       console.log(result);
       const length = result.data.getPostComments.length;
       for (let i=0; i<length; i++) {
+        //var d = result.data.getPostComments[i].createdAt
+        //var date = d.getMonth() + " / " + d.getDate() + " / " + d.getFullYear();
         let loadedComment = {
           id: result.data.getPostComments[i]._id,
           login: result.data.getPostComments[i].commenter.login,
@@ -203,17 +115,19 @@ export default function CommentsScreen({ navigation }) {
           upvotes: result.data.getPostComments[i].upvotes,
           downvotes: result.data.getPostComments[i].downvotes,
         };
-        //console.log(loadedComment);
+        //console.log("1 comment" + loadedComment);
         COMMENTS.push(loadedComment);   
       }
       //not returning a token
       setPersistantData("token", result.extensions.token);
       console.log("got all comments");
+      setComments(COMMENTS)
     } catch (error) {
         console.log(error.message);
       } 
   }
-  loadComments();
+   loadComments();
+   //console.log(COMMENTS);
 } // end of what to load when page opens
   //loadComments();
   const [allComments, setComments] = useState(COMMENTS);
@@ -227,12 +141,14 @@ export default function CommentsScreen({ navigation }) {
   //coment flat list stuf start
 
   const renderComment = ({ item }) => {
-    const backgroundColor = item.id === currentID ? "#6e3b6e" : "#f9c2ff";
-    const color = item.id === currentID ? 'white' : 'black';
+    //const backgroundColor = item.id === currentID ? "#6e3b6e" : "#f9c2ff";
+    //const color = item.id === currentID ? 'white' : 'black';
 
     return (
-      <View style={styles.comment}>
-      <Text style={styles.login}>{item.login}</Text>
+      <View>
+      <View style={styles.row}>
+        <Text style={styles.name}>{item.login}</Text>
+      </View>
       <Text style={styles.bodyOfComment}>{item.comment}</Text>
       <View style={styles.row}>
         <Text /*replace with like icon also add on press api*/>upvotes: </Text>
@@ -270,8 +186,9 @@ export default function CommentsScreen({ navigation }) {
             body: JSON.stringify(requestBody),
             headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token},
           });
-  
-      if (response.status !== 200 && response.status !== 201) {
+      
+        console.log(" add Comment token" + token);
+        if (response.status !== 200 && response.status !== 201) {
         throw new Error("Something happened on our end, try again later!");
       }
   
@@ -309,13 +226,13 @@ export default function CommentsScreen({ navigation }) {
     >*/}
       <SafeAreaView style={styles.container}>
         <View style={styles.commentSpace}>
-        <GestureRecognizer
+       {/* <GestureRecognizer
           onSwipeDown={(state) => onSwipeDown(state)}
           config={config}
           style={{
             flex: 1,
           }}
-        >
+        >*/}
           <View style={styles.row}>
             <TextInput
               style={styles.TextInput}
@@ -331,7 +248,7 @@ export default function CommentsScreen({ navigation }) {
               <Text style={styles.commentText}>COMMENT</Text>
             </TouchableOpacity>
           </View>
-        </GestureRecognizer>
+        {/*</GestureRecognizer>*/}
         </View>
         <View style={{height: "80%",}}>
           <FlatList
@@ -374,15 +291,14 @@ const styles = StyleSheet.create({
   TextInput: {
     height:80,
     flex: 1,
-    //padding: 25,
+    padding: 10,
     marginTop: 25,
     marginBottom: 10,
     marginLeft: 10,
-    //multiline=true
   },
   commentBtn: {
     width: "35%",
-   // borderRadius: 25,
+    borderRadius: 25,
     height: 80,
   //  alignItems: "center",
   //justifyContent: "center",
@@ -393,6 +309,7 @@ const styles = StyleSheet.create({
   },
   commentText: {
     color: "white",
+    alignItems: "center",
   },
   errorMessage: {
     color: "red",
@@ -405,8 +322,14 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   name: {
-    color: "red",
-    fontSize: 18,
+    color: "black",
+    fontSize: 15,
+    fontWeight: "bold",
+  },
+  date: {
+    color: "grey",
+    fontSize: 13,
+    //fontWeight: "bold",
   },
   bodyOfComment: {
     color: "black",
