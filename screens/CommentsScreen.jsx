@@ -23,7 +23,6 @@ const config = {
   directionalOffsetThreshold: 80,
 };
 
-
 /*const CommentItem = ({ comment, onPress, backgroundColor, textColor }) => (
   <TouchableOpacity onPress={onPress} style={[styles.comment, backgroundColor]}>
     <Text style={[styles.name, textColor]}>{comment.login}</Text>
@@ -39,7 +38,7 @@ const config = {
 // load in end
 //let newComments = true;
 export default function CommentsScreen({ navigation }) {
-  const [newComments, setNewComments] = useState("0");;
+  const [newComments, setNewComments] = useState("0");
   getPersistantData("newComments")
   .then((result) => {
     setNewComments(result);
@@ -51,10 +50,13 @@ export default function CommentsScreen({ navigation }) {
 
   const [token, setToken] = useState("");
   const [postId, setPostId] = useState("");
+  const [messageTarget, setTarget] = useState({});
   const COMMENTS = [];
   // get token
   //const [token, setToken] = useState("");
   if (newComments === "1") {
+    //setTarget({nameT: "Post", targetId: postId, handler: 1})
+
   getPersistantData("token")
   .then((result) => {
     setToken(result);
@@ -67,13 +69,13 @@ export default function CommentsScreen({ navigation }) {
   getPersistantData("postId")
   .then((result) => {
     setPostId(result);
+    setTarget({nameT: "Post", targetId: result, handler: 1});
   })
   .catch((err) => console.error(err));
   console.log("PostIdLoadedInComments: " + postId);
   //setNewComments(false);
   //newComments = false;
   setPersistantData("newComments", "0");
-  
 //setNewComments(false);
   //loadComments();
   //const COMMENTS = [];
@@ -131,11 +133,12 @@ export default function CommentsScreen({ navigation }) {
 } // end of what to load when page opens
   //loadComments();
   const [allComments, setComments] = useState(COMMENTS);
-
   const [newComment, setComment] = useState('');
   // pass it the array returned by api
   const [allReplies, setReplies] = useState([]);
   const [currentID, setID] = useState(null);
+
+  //const [messageTarget, setTarget] = useState({nameT: "Post", targetId: postId, handler: 1});
 
 
   //coment flat list stuf start
@@ -146,18 +149,22 @@ export default function CommentsScreen({ navigation }) {
 
     return (
       <View>
-      <View style={styles.row}>
-        <Text style={styles.name}>{item.login}</Text>
-      </View>
-      <Text style={styles.bodyOfComment}>{item.comment}</Text>
-      <View style={styles.row}>
-        <Text /*replace with like icon also add on press api*/>upvotes: </Text>
-        <Text >{item.upvotes} </Text>
-        <Text /*replace with dislike icon*/>Downvotes: </Text>
-        <Text >{item.downvotes} </Text>
-        <Text >REPLY</Text>
-      </View>
-      <Text style={styles.seeReplies}>{item.replieNum} Replies</Text>
+        <View style={styles.row}>
+          <Text style={styles.name}>{item.login}</Text>
+        </View>
+        <Text style={styles.bodyOfComment}>{item.comment}</Text>
+        <View style={styles.row}>
+          <Text /*replace with like icon also add on press api*/>upvotes: </Text>
+          <Text >{item.upvotes} </Text>
+          <Text /*replace with dislike icon*/>Downvotes: </Text>
+          <Text >{item.downvotes} </Text>
+          <TouchableOpacity onPress={() => setTarget({nameT: item.login, targetId: item.id, handler: 2})}>
+            <Text >REPLY</Text>
+          </TouchableOpacity>
+        </View>
+          <TouchableOpacity /*onPress={() => loadReplies()}*/>
+            <Text style={styles.seeReplies}> Replies</Text>
+        </TouchableOpacity>
       </View>
     );
   };
@@ -165,14 +172,18 @@ export default function CommentsScreen({ navigation }) {
   const onSwipeDown = (gestureState) => {
     navigation.navigate("mainScreenStack", { screen: "Main" });
   };
-  
+
+// add coments code start
+// add coments code start
+// add coments code start
+
   const addCommentHandler = async () => {
     // sent api request to add comment here
     try {
       let requestBody = {
         query: `
                 mutation {
-                    createComment(commentInput: {postId: "60f9d295ab3c97001559286a" Content: "${newComment}"}) {
+                    createComment(commentInput: {postId: "${postId}" Content: "${newComment}"}) {
                       _id
                       commenter{ login }
                     }
@@ -212,8 +223,22 @@ export default function CommentsScreen({ navigation }) {
     } catch (error) {
         console.log(error.message);
       } 
-
   }
+  const addReplieHandler = async () => {
+    // replie to a comment
+  }
+  const addHandler = async () => {
+    if (messageTarget.handler === 1) {
+      addCommentHandler();
+    } else if (messageTarget.handler === 2) {
+      addReplieHandler();
+    }
+  }
+
+// add coments code End
+// add coments code ENd
+// add coments code end
+
   return (
     // Container View
     <View style={styles.container}>
@@ -233,6 +258,9 @@ export default function CommentsScreen({ navigation }) {
             flex: 1,
           }}
         >*/}
+          <TouchableOpacity style={styles.reply} onPress={() => setTarget({nameT: "Post", targetId: postId, handler: 1})}>
+              <Text style={styles.reply}>Select Reply to Post</Text>
+          </TouchableOpacity>
           <View style={styles.row}>
             <TextInput
               style={styles.TextInput}
@@ -244,8 +272,8 @@ export default function CommentsScreen({ navigation }) {
               maxLength={256}
               onChangeText={(commentInput) => setComment(commentInput)}
             />
-            <TouchableOpacity style={styles.commentBtn} onPress={() => addCommentHandler()}>
-              <Text style={styles.commentText}>COMMENT</Text>
+            <TouchableOpacity style={styles.commentBtn} onPress={() => addHandler()}>
+              <Text style={styles.commentText}>Reply to {messageTarget.nameT}</Text>
             </TouchableOpacity>
           </View>
         {/*</GestureRecognizer>*/}
@@ -300,7 +328,7 @@ const styles = StyleSheet.create({
     width: "35%",
     borderRadius: 25,
     height: 80,
-  //  alignItems: "center",
+    alignItems: "center",
   //justifyContent: "center",
     marginTop: 25,
     marginBottom: 10,
