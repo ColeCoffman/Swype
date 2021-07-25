@@ -12,6 +12,7 @@ import {
 
 
 import { getPersistantData } from "../context/Storage";
+import { setPersistantData } from "../context/Storage";
 import BottomBar from "../components/BottomBar";
 import Swipes from "../components/Swipes";
 
@@ -31,6 +32,7 @@ export default function MainScreen({ navigation }) {
   const [token, setToken] = useState("");
   const swipesRef = useRef(null);
   const onSwipeUp = (gestureState) => {
+    setPersistantData("newComments", "1");
     navigation.navigate("mainScreenStack", { screen: "Comments" });
   };
   // Get Token and set state

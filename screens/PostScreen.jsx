@@ -14,6 +14,7 @@ import GestureRecognizer, {
 } from "react-native-swipe-gestures";
 
 import { getPersistantData } from "../context/Storage";
+import { setPersistantData } from "../context/Storage";
 
 const config = {
   velocityThreshold: 0.3,
@@ -22,6 +23,7 @@ const config = {
 
 export default function PostScreen({ navigation }) {
   const onSwipeUp = (gestureState) => {
+    setPersistantData("newComments", "1");
     navigation.navigate("mainScreenStack", { screen: "Comments" });
   };
 
