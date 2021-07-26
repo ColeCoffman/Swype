@@ -10,16 +10,14 @@ import {
     Image,
     TouchableOpacity,
   } from "react-native";
+import { getPersistantData } from "../context/Storage";
 
-  let imagePath = require("../assets/placeholder3.jpg");
-  
-
-  export default function SwipeableImage({willLike, willPass}) {
-
+  export default function SwipeableImage({currPostTitle, currPostID, currPostAuthor, currPostScore, currPostImage, willLike, willPass}) {
+    
 
       return (
           <View>
-              <Image source={imagePath} style ={styles.photo}></Image>
+              <Image source={{ uri: currPostImage, }} style ={styles.photo}></Image>
                 
                 {willLike && 
                     <View style={styles.likeBox}>
@@ -31,15 +29,26 @@ import {
                     <Text style={{ ...styles.textPrimary, color: '#F06795' }}>Dislike</Text>
                     </View>
                 )} 
-              <View style ={styles.textContainer}>
-                <View style={styles.textRow}>
-                    <Text style ={[styles.textPrimary, styles.textShadow]}>Example Title</Text>
-                </View>
-                <View style={styles.textRow}>
-                    <FontAwesome5 name="user" size={18} color="white"></FontAwesome5>
-                    <Text style ={[styles.textSecondary, styles.textShadow]}>Example Poster Name</Text>    
-                </View>
+              <View style ={styles.scoreContainer}>
+                {currPostScore && (
+                  <View style={styles.textRow}>
+                    <FontAwesome5 style={styles.textShadow} name="medal" size={18} color="white"></FontAwesome5>
+                    <Text style ={[styles.textSecondary, styles.textShadow]}>{currPostScore}</Text>    
+                  </View>)}  
               </View>
+              
+              {currPostTitle &&(
+                <View style ={styles.textContainer}>
+                  <View style={styles.textRow}>
+                      <Text style ={[styles.textPrimary, styles.textShadow]}>{currPostTitle}</Text>
+                  </View>
+                  <View style={styles.textRow}>
+                      <FontAwesome5 style={styles.textShadow} name="user" size={18} color="white" border></FontAwesome5>
+                      <Text style ={[styles.textSecondary, styles.textShadow]}>{currPostAuthor}</Text>    
+                  </View>
+                </View>
+              )}
+              
           </View>
       )
   }
@@ -49,8 +58,9 @@ import {
       photo: {
         height: "100%",
         width: "100%",
-        resizeMode: 'cover',
+        resizeMode: 'contain',
         borderRadius: 20,
+        backgroundColor: "#073C45",
 
       },
 
@@ -58,6 +68,12 @@ import {
         position: 'absolute',
         bottom: 20,
         left: 20,
+      },
+
+      scoreContainer: {
+        position: 'absolute',
+        top: 20,
+        right: 20,
       },
 
       textRow: {
