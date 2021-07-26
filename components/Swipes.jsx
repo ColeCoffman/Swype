@@ -14,13 +14,30 @@ import {
     TouchableOpacity,
     Animated,
   } from "react-native";
+  import { getPersistantData } from "../context/Storage";
+  import { setPersistantData } from "../context/Storage";
 
 
-  
-  export default function Swipes() {
+function Swipes({ swipesRef, handleLike, handleDislike}) {
+    const [token, setToken] = useState("");
+    // Get Token and set state
+    getPersistantData("token")
+    .then((result) => {
+      setToken(result);
+    })
+    .catch((err) => console.error(err));
+
+    const [postId, setPostId] = useState("");
+    const POST = [];
+
+    // placeholder setPers
+    setPersistantData("postId", "60eca4049a0c8f0015b69b56");
+    //const [postId, setPostId] = useState("");
+    getPersistantData("postId")
 
     const [willLike, setWillLike] = useState(false)
     const [willPass, setWillPass] = useState(false)
+    const [currPost, setPost] = useState({postID: "postID", author: "Author", Title: "Title", score: "Score", Image: "https://i.imgur.com/bDllXgq.jpeg", upvotes: "0", downvotes: "0",});
 
     const renderLeftActions = () => {
         return (
@@ -31,7 +48,7 @@ import {
           </RectButton>
         )
       }
-
+      
       const renderRightActions = () => {
         return (
             // We can pass in the address of the next image in this swipeable call, and it will
@@ -42,27 +59,135 @@ import {
         )
       }
 
+      const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        wait(2000).then(() => setRefreshing(false));
+      }, []);
 
       return (
         <Swipeable
-            
+            ref={swipesRef}
             friction={2}
             leftThreshold={20}
             rightThreshold={20}
             renderLeftActions={renderLeftActions}
             renderRightActions={renderRightActions}
+
+            // Left Swipe
             onSwipeableLeftOpen={() => {
             setWillLike(false)
+            const loadPost = async () => {
+              try {
+                let requestBody = {
+                  query: `
+                          query {
+                              getRandomPost(currentPostId: "${postId}") {
+                                _id
+                                poster{ login }
+                                title
+                                Image
+                                upvotes
+                                downvotes
+                              }
+                          }
+                      `,
+                };
+          
+                const response = await fetch("http://largeproject.herokuapp.com/api", {
+                      method: "POST",
+                      body: JSON.stringify(requestBody),
+                      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token},
+                    });
+                if (response.status !== 200 && response.status !== 201) {
+                  throw new Error("Something happened on our end, try again later!");
+                }
+            
+                const result = await JSON.parse(await response.text());
+                console.log(result);
+              
+                setPersistantData("token", result.extensions.token);
+                setPost(
+                  {
+                    postID: result.data.getRandomPost._id, 
+                    author: result.data.getRandomPost.poster.login, 
+                    Title: result.data.getRandomPost.title, 
+                    score: "Test Score", 
+                    Image: result.data.getRandomPost.Image,
+                    upvotes: result.data.getRandomPost.upvotes,
+                    downvotes: result.data.getRandomPost.downvotes,
+                  }
+                );
+                console.log("got random Post");
+              } catch (error) {
+                  console.log(error.message);
+                } 
+            }
+             loadPost();
             // add Like function
+              setPersistantData(postId, currPost.postID);
+              handleLike();
             }}
+
+            // Right Swipe
             onSwipeableRightOpen={() => {
             setWillPass(false)
+            const loadPost = async () => {
+              try {
+                let requestBody = {
+                  query: `
+                          query {
+                              getRandomPost(currentPostId: "${postId}") {
+                                _id
+                                poster{ login }
+                                title
+                                Image
+                                upvotes
+                                downvotes
+                              }
+                          }
+                      `,
+                };
+          
+                const response = await fetch("http://largeproject.herokuapp.com/api", {
+                      method: "POST",
+                      body: JSON.stringify(requestBody),
+                      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token},
+                    });
+                if (response.status !== 200 && response.status !== 201) {
+                  throw new Error("Something happened on our end, try again later!");
+                }
+            
+                const result = await JSON.parse(await response.text());
+                console.log(result);
+              
+                setPersistantData("token", result.extensions.token);
+                setPost(
+                  {
+                    postID: result.data.getRandomPost._id, 
+                    author: result.data.getRandomPost.poster.login, 
+                    Title: result.data.getRandomPost.title, 
+                    score: "Test Score", 
+                    Image: result.data.getRandomPost.Image,
+                    upvotes: result.data.getRandomPost.upvotes,
+                    downvotes: result.data.getRandomPost.downvotes,
+                  }
+                );
+                console.log("got random Post");
+              } catch (error) {
+                  console.log(error.message);
+                } 
+            }
+             loadPost();
             //add dislike Function
+            setPersistantData(postId, currPost.postID);
+            handleDislike();
             }}
             onSwipeableLeftWillOpen={() => setWillLike(true)}
             onSwipeableRightWillOpen={() => setWillPass(true)}
         >
-        <SwipeableImage  willLike={willLike} willPass={willPass}/>
+        <SwipeableImage  currPostTitle = {currPost.Title} currPostID = {currPost.postID} 
+          currPostAuthor = {currPost.author} currPostScore = {currPost.score} currPostImage = {currPost.Image} 
+            willLike={willLike} willPass={willPass}/>
       </Swipeable>
       )
   }
@@ -73,4 +198,4 @@ import {
     },
   })
 
-  
+  export default React.forwardRef((props, ref) => <Swipes swipesRef={ref} {...props}></Swipes>)
