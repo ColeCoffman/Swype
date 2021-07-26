@@ -25,9 +25,6 @@ const config = {
   directionalOffsetThreshold: 80,
 };
 
-let imagePath = require("../assets/placeholder3.jpg");
-
-
 export default function MainScreen({ navigation }) {
   const [token, setToken] = useState("");
   const swipesRef = useRef(null);
@@ -42,6 +39,24 @@ export default function MainScreen({ navigation }) {
     })
     .catch((err) => console.error(err));
 
+    const [postId, setPostId] = useState("");
+
+    // placeholder setPers
+  setPersistantData("postId", "60eca4049a0c8f0015b69b56");
+  //const [postId, setPostId] = useState("");
+  getPersistantData("postId")
+
+
+  function handleLike() {
+    console.log('like')
+    swipesRef.current.close()
+  }
+
+  function handleDislike() {
+    console.log('dislike')
+    swipesRef.current.close()
+  }
+
   return (
     // Container View
     <GestureRecognizer
@@ -53,12 +68,12 @@ export default function MainScreen({ navigation }) {
     >
       <View style={styles.container}>
         <View style ={styles.swipes}> 
-                    <Swipes>
-                    </Swipes>
-        </View>
-        <View>
-        <Text>Comment Screen</Text>
-          <BottomBar />
+           <Swipes
+            ref={swipesRef}
+            handleLike={handleLike}
+            handleDislike={handleDislike}
+            >
+          </Swipes>
         </View>
       </View>
   </GestureRecognizer>    
