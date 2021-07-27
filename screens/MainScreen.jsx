@@ -1,4 +1,4 @@
-import React, { useState, useRef} from "react";
+import React, { useState, useRef } from "react";
 import {
   ActivityIndicator,
   Button,
@@ -10,10 +10,8 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-
 import { getPersistantData } from "../context/Storage";
 import { setPersistantData } from "../context/Storage";
-import BottomBar from "../components/BottomBar";
 import Swipes from "../components/Swipes";
 
 import GestureRecognizer, {
@@ -39,22 +37,21 @@ export default function MainScreen({ navigation }) {
     })
     .catch((err) => console.error(err));
 
-    const [postId, setPostId] = useState("");
+  const [postId, setPostId] = useState("");
 
-    // placeholder setPers
+  // placeholder setPers
   setPersistantData("postId", "60eca4049a0c8f0015b69b56");
   //const [postId, setPostId] = useState("");
-  getPersistantData("postId")
-
+  getPersistantData("postId");
 
   function handleLike() {
-    console.log('like')
-    swipesRef.current.close()
+    console.log("like");
+    swipesRef.current.close();
   }
 
   function handleDislike() {
-    console.log('dislike')
-    swipesRef.current.close()
+    console.log("dislike");
+    swipesRef.current.close();
   }
 
   return (
@@ -67,21 +64,20 @@ export default function MainScreen({ navigation }) {
       }}
     >
       <View style={styles.container}>
-        <View style ={styles.swipes}> 
-           <Swipes
+        <View style={styles.swipes}>
+          <Swipes
             ref={swipesRef}
             handleLike={handleLike}
             handleDislike={handleDislike}
-            >
-          </Swipes>
+          ></Swipes>
         </View>
       </View>
-  </GestureRecognizer>    
+    </GestureRecognizer>
   );
 }
 
 const styles = StyleSheet.create({
-  container:{
+  container: {
     flex: 1,
   },
 
@@ -89,7 +85,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     paddingTop: 8,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 3,
@@ -98,5 +94,4 @@ const styles = StyleSheet.create({
     shadowRadius: 4.65,
     elevation: 7,
   },
-})
-
+});
