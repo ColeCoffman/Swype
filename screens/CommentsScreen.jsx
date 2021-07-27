@@ -52,6 +52,69 @@ export default function CommentsScreen({ navigation }) {
   const [postId, setPostId] = useState("");
   const [messageTarget, setTarget] = useState({});
   const COMMENTS = [];
+  const loadComments = async () => {
+    try {
+      let requestBody = {
+        query: `
+                query {
+                    getPostComments(postId: "${postId}") {
+                      _id
+                      commenter{ login }
+                      Content
+                      upvotes
+                      downvotes
+                      userVoteStatus
+                    }
+                }
+            `,
+      };
+
+      const response = await fetch("http://largeproject.herokuapp.com/api", {
+            method: "POST",
+            body: JSON.stringify(requestBody),
+            headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token},
+          });
+      if (response.status !== 200 && response.status !== 201) {
+        throw new Error("Something happened on our end, try again later!");
+      }
+  
+      const result = await JSON.parse(await response.text());
+      console.log(result);
+      const length = result.data.getPostComments.length;
+      for (let i=0; i<length; i++) {
+        let likeStatus = result.data.getPostComments[i].userVoteStatus;
+        var like;
+        var dislike;
+        if (likeStatus === 'upvote') {
+          like = true;
+          dislike = false;
+        } else if (likeStatus === 'downvote') {
+          like = false;
+          dislike = true;
+        } else if (likeStatus === 'neutral') {
+          like = false;
+          dislike = false;  
+        }
+        let loadedComment = {
+          id: result.data.getPostComments[i]._id,
+          login: result.data.getPostComments[i].commenter.login,
+          comment: result.data.getPostComments[i].Content,
+          upvotes: result.data.getPostComments[i].upvotes,
+          downvotes: result.data.getPostComments[i].downvotes,
+          like: like,
+          dislike: dislike,
+        };
+        //console.log("1 comment" + loadedComment);
+        COMMENTS.push(loadedComment);   
+      }
+      //not returning a token
+      setPersistantData("token", result.extensions.token);
+      console.log("got all comments");
+      setComments(COMMENTS)
+    } catch (error) {
+        console.log(error.message);
+      } 
+  }
   // get token
   //const [token, setToken] = useState("");
   if (newComments === "1") {
@@ -79,7 +142,7 @@ export default function CommentsScreen({ navigation }) {
 //setNewComments(false);
   //loadComments();
   //const COMMENTS = [];
-  const loadComments = async () => {
+  /*const loadComments = async () => {
     try {
       let requestBody = {
         query: `
@@ -90,6 +153,7 @@ export default function CommentsScreen({ navigation }) {
                       Content
                       upvotes
                       downvotes
+                      userVoteStatus
                     }
                 }
             `,
@@ -108,14 +172,27 @@ export default function CommentsScreen({ navigation }) {
       console.log(result);
       const length = result.data.getPostComments.length;
       for (let i=0; i<length; i++) {
-        //var d = result.data.getPostComments[i].createdAt
-        //var date = d.getMonth() + " / " + d.getDate() + " / " + d.getFullYear();
+        let likeStatus = result.data.getPostComments[i].userVoteStatus;
+        var like;
+        var dislike;
+        if (likeStatus === 'upvote') {
+          like = true;
+          dislike = false;
+        } else if (likeStatus === 'downvote') {
+          like = false;
+          dislike = true;
+        } else if (likeStatus === 'neutral') {
+          like = false;
+          dislike = false;  
+        }
         let loadedComment = {
           id: result.data.getPostComments[i]._id,
           login: result.data.getPostComments[i].commenter.login,
           comment: result.data.getPostComments[i].Content,
           upvotes: result.data.getPostComments[i].upvotes,
           downvotes: result.data.getPostComments[i].downvotes,
+          like: like,
+          dislike: dislike,
         };
         //console.log("1 comment" + loadedComment);
         COMMENTS.push(loadedComment);   
@@ -127,10 +204,11 @@ export default function CommentsScreen({ navigation }) {
     } catch (error) {
         console.log(error.message);
       } 
-  }
+  }*/
    loadComments();
    //console.log(COMMENTS);
 } // end of what to load when page opens
+
   //loadComments();
   const [allComments, setComments] = useState(COMMENTS);
   const [newComment, setComment] = useState('');
@@ -153,6 +231,7 @@ export default function CommentsScreen({ navigation }) {
                       Content
                       upvotes
                       downvotes
+                      userVoteStatus
                     }
                 }
             `,
@@ -171,14 +250,27 @@ export default function CommentsScreen({ navigation }) {
       console.log(result);
       const length = result.data.getCommentReplies.length;
       for (let i=0; i<length; i++) {
-        //var d = result.data.getPostComments[i].createdAt
-        //var date = d.getMonth() + " / " + d.getDate() + " / " + d.getFullYear();
+        let likeStatus = result.data.getCommentReplies[i].userVoteStatus;
+        var like;
+        var dislike;
+        if (likeStatus === 'upvote') {
+          like = true;
+          dislike = false;
+        } else if (likeStatus === 'downvote') {
+          like = false;
+          dislike = true;
+        } else if (likeStatus === 'neutral') {
+          like = false;
+          dislike = false;  
+        }
         let loadedReply = {
           id: result.data.getCommentReplies[i]._id,
           login: result.data.getCommentReplies[i].replier.login,
           comment: result.data.getCommentReplies[i].Content,
           upvotes: result.data.getCommentReplies[i].upvotes,
           downvotes: result.data.getCommentReplies[i].downvotes,
+          like: like,
+          dislike: dislike,
         };
         //console.log("1 comment" + loadedComment);
         REPLIES.push(loadedReply);   
@@ -194,6 +286,143 @@ export default function CommentsScreen({ navigation }) {
         console.log(error.message);
       } 
   }
+  // neutral update start
+  const neutralStatus = async (replyId, type) => {
+    // change to neutral start
+    try {
+      let requestBody = {
+        query: `
+                mutation {
+                  upDownNeutralvote(voteStatus: "neutral" contentType: "${type}" contentId: "${replyId}") {
+                     contentType
+                    }
+                }
+            `,
+      };
+  
+      const response = await fetch("http://largeproject.herokuapp.com/api", {
+            method: "POST",
+            body: JSON.stringify(requestBody),
+            headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token},
+          });
+      
+        //console.log(" add replie token" + token);
+        if (response.status !== 200 && response.status !== 201) {
+        throw new Error("Something happened on our end, try again later!");
+      }
+  
+      const result = await JSON.parse(await response.text());
+      console.log(result);
+        
+      setPersistantData("token", result.extensions.token);
+      setToken(result.extensions.token);
+      //loadReplies(currentID);
+      console.log("cleared like");
+    } catch (error) {
+        console.log(error.message);
+      } 
+  }
+  // neutral update end
+  // like update start
+  const likeStatus = async (replyId, type) => {
+    try {
+      let requestBody = {
+        query: `
+                mutation {
+                  upDownNeutralvote(voteStatus: "up" contentType: "${type}" contentId: "${replyId}") {
+                     contentType
+                    }
+                }
+            `,
+      };
+  
+      const response = await fetch("http://largeproject.herokuapp.com/api", {
+            method: "POST",
+            body: JSON.stringify(requestBody),
+            headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token},
+          });
+      
+        //console.log(" add replie token" + token);
+        if (response.status !== 200 && response.status !== 201) {
+        throw new Error("Something happened on our end, try again later!");
+      }
+  
+      const result = await JSON.parse(await response.text());
+      console.log(result);
+        
+      setPersistantData("token", result.extensions.token);
+      setToken(result.extensions.token);
+      //loadReplies(currentID);
+      console.log("api: added Like");
+    } catch (error) {
+        console.log(error.message);
+      } 
+  }
+  // add like end
+  // add dislike start
+  const dislikeStatus = async (replyId, type) => {
+    try {
+      let requestBody = {
+        query: `
+                mutation {
+                  upDownNeutralvote(voteStatus: "down" contentType: "${type}" contentId: "${replyId}") {
+                     contentType
+                    }
+                }
+            `,
+      };
+  
+      const response = await fetch("http://largeproject.herokuapp.com/api", {
+            method: "POST",
+            body: JSON.stringify(requestBody),
+            headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token},
+          });
+      
+        //console.log(" add replie token" + token);
+        if (response.status !== 200 && response.status !== 201) {
+        throw new Error("Something happened on our end, try again later!");
+      }
+  
+      const result = await JSON.parse(await response.text());
+      console.log(result);
+        
+      setPersistantData("token", result.extensions.token);
+      setToken(result.extensions.token);
+      //loadReplies(currentID);
+      console.log("api: added dislike");
+    } catch (error) {
+        console.log(error.message);
+      } 
+  }
+  // add dislike end
+
+    // update like and dislike start
+  //likeReplie(item.like)
+  const likeReplie = async (replyId, likeS, dislikeS) => {
+    // change to neutral start
+    if (likeS === true) {
+      await neutralStatus(replyId, "reply");
+    } else if (dislikeS === true) {
+      await neutralStatus(replyId, "reply");
+      await likeStatus(replyId, "reply");
+    } else {
+      await likeStatus(replyId, "reply");
+    }
+    loadReplies(currentID);
+  }
+  const dislikeReplie = async (replyId, likeS, dislikeS) => {
+    // change to neutral start
+    if (dislikeS === true) {
+      await neutralStatus(replyId, "reply");
+    } else if (likeS === true) {
+      await neutralStatus(replyId, "reply");
+      await dislikeStatus(replyId, "reply");
+    } else {
+      await dislikeStatus(replyId, "reply");
+    }
+    loadReplies(currentID);
+  }
+  // update like and dislike end
   // replie falt list start
   const renderReplie = ({ item }) => {
     return (
@@ -203,9 +432,33 @@ export default function CommentsScreen({ navigation }) {
         </View>
         <Text style={styles.bodyOfComment}>{item.comment}</Text>
         <View style={styles.row}>
-          <Text /*replace with like icon also add on press api*/>upvotes: </Text>
+          <TouchableOpacity onPress={() => likeReplie(item.id, item.like, item.dislike)}>
+            {item.like ? (
+              <Image
+              style={{ marginLeft: 15 }}
+              resizeMode="contain"
+              source={require("../assets/likedIcon.png")}
+            />
+            ) : <Image
+                style={{ marginLeft: 15 }}
+                resizeMode="contain"
+                source={require("../assets/likeIcon.png")}
+              />}
+          </TouchableOpacity>
           <Text >{item.upvotes} </Text>
-          <Text /*replace with dislike icon*/>Downvotes: </Text>
+          <TouchableOpacity onPress={() => dislikeReplie(item.id, item.like, item.dislike)}>
+            {item.dislike ? (
+              <Image
+              style={{ marginLeft: 15 }}
+              resizeMode="contain"
+              source={require("../assets/dislikedIcon.png")}
+            />
+            ) : <Image
+                style={{ marginLeft: 15 }}
+                resizeMode="contain"
+                source={require("../assets/dislikeIcon.png")}
+              />}
+          </TouchableOpacity>
           <Text >{item.downvotes} </Text>
           <TouchableOpacity onPress={() => setTarget({nameT: item.login, targetId: item.id, handler: 3})}>
             <Text >REPLY</Text>
@@ -214,6 +467,32 @@ export default function CommentsScreen({ navigation }) {
       </View> 
     )
   }
+  // add coment like and dislike start
+  const likeComment = async (replyId, likeS, dislikeS) => {
+    // change to neutral start
+    if (likeS === true) {
+      await neutralStatus(replyId, "comment");
+    } else if (dislikeS === true) {
+      await neutralStatus(replyId, "comment");
+      await likeStatus(replyId, "comment");
+    } else {
+      await likeStatus(replyId, "comment");
+    }
+    loadComments();
+  }
+  const dislikeComment = async (replyId, likeS, dislikeS) => {
+    // change to neutral start
+    if (dislikeS === true) {
+      await neutralStatus(replyId, "comment");
+    } else if (likeS === true) {
+      await neutralStatus(replyId, "comment");
+      await dislikeStatus(replyId, "comment");
+    } else {
+      await dislikeStatus(replyId, "comment");
+    }
+    loadComments();
+  }
+  // add coment like and dislike end
   //coment flat list stuf start
   const renderComment = ({ item }) => {
     //const backgroundColor = item.id === currentID ? "#6e3b6e" : "#f9c2ff";
@@ -226,9 +505,33 @@ export default function CommentsScreen({ navigation }) {
         </View>
         <Text style={styles.bodyOfComment}>{item.comment}</Text>
         <View style={styles.row}>
-          <Text /*replace with like icon also add on press api*/>upvotes: </Text>
+          <TouchableOpacity onPress={() => likeComment(item.id, item.like, item.dislike)}>
+            {item.like ? (
+              <Image
+              style={{ marginLeft: 15 }}
+              resizeMode="contain"
+              source={require("../assets/likedIcon.png")}
+            />
+            ) : <Image
+                style={{ marginLeft: 15 }}
+                resizeMode="contain"
+                source={require("../assets/likeIcon.png")}
+              />}
+          </TouchableOpacity>
           <Text >{item.upvotes} </Text>
-          <Text /*replace with dislike icon*/>Downvotes: </Text>
+          <TouchableOpacity onPress={() => dislikeComment(item.id, item.like, item.dislike)}>
+            {item.dislike ? (
+              <Image
+              style={{ marginLeft: 15 }}
+              resizeMode="contain"
+              source={require("../assets/dislikedIcon.png")}
+            />
+            ) : <Image
+                style={{ marginLeft: 15 }}
+                resizeMode="contain"
+                source={require("../assets/dislikeIcon.png")}
+              />}
+          </TouchableOpacity>
           <Text >{item.downvotes} </Text>
           <TouchableOpacity onPress={() => setTarget({nameT: item.login, targetId: item.id, handler: 2})}>
             <Text >REPLY</Text>
@@ -297,6 +600,8 @@ export default function CommentsScreen({ navigation }) {
           comment: newComment,
           upvotes: 0,
           downvotes: 0,
+          like: false,
+          dislike: false,
         }
       ]);
       setPersistantData("token", result.extensions.token);
@@ -348,6 +653,8 @@ export default function CommentsScreen({ navigation }) {
             comment: comment,
             upvotes: 0,
             downvotes: 0,
+            like: false,
+            dislike: false,
           }
         ]);
       }
@@ -399,6 +706,8 @@ export default function CommentsScreen({ navigation }) {
             comment: comment,
             upvotes: 0,
             downvotes: 0,
+            like: false,
+            dislike: false,
           }
         ]);
         
