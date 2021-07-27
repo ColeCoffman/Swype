@@ -11,10 +11,10 @@ import {
     TouchableOpacity,
   } from "react-native";
 import { getPersistantData } from "../context/Storage";
+import { setPersistantData } from "../context/Storage";
 
   export default function SwipeableImage({currPostTitle, currPostID, currPostAuthor, currPostScore, currPostImage, willLike, willPass}) {
     
-
       return (
           <View>
               <Image source={{ uri: currPostImage, }} style ={styles.photo}></Image>
@@ -30,11 +30,16 @@ import { getPersistantData } from "../context/Storage";
                     </View>
                 )} 
               <View style ={styles.scoreContainer}>
-                {currPostScore && (
+                {currPostScore ? (
                   <View style={styles.textRow}>
                     <FontAwesome5 style={styles.textShadow} name="medal" size={18} color="white"></FontAwesome5>
                     <Text style ={[styles.textSecondary, styles.textShadow]}>{currPostScore}</Text>    
-                  </View>)}  
+                  </View>): null}  
+                  {currPostScore === 0 ? (
+                  <View style={styles.textRow}>
+                    <FontAwesome5 style={styles.textShadow} name="medal" size={18} color="white"></FontAwesome5>
+                    <Text style ={[styles.textSecondary, styles.textShadow]}>0</Text>    
+                  </View>): null}  
               </View>
               
               {currPostTitle &&(
