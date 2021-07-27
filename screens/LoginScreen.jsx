@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   ActivityIndicator,
   Button,
@@ -18,6 +18,7 @@ export default function LoginScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  const passwordTEXTINPUT = useRef();
   // This runs automatically on render
 
   useEffect(() => {
@@ -119,6 +120,8 @@ export default function LoginScreen({ navigation }) {
           placeholder="Username"
           placeholderTextColor="black"
           autoCapitalize="none"
+          returnKeyType="next"
+          onSubmitEditing={() => passwordTEXTINPUT.current.focus()}
           onChangeText={(usernameInput) => setUsername(usernameInput)}
         />
       </View>
@@ -130,6 +133,9 @@ export default function LoginScreen({ navigation }) {
           placeholderTextColor="black"
           secureTextEntry={true}
           autoCapitalize="none"
+          returnKeyType="done"
+          onSubmitEditing={() => LoginHandler(username, password)}
+          ref={passwordTEXTINPUT}
           onChangeText={(passwordInput) => setPassword(passwordInput)}
         />
       </View>
