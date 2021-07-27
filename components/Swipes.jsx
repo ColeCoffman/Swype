@@ -31,13 +31,15 @@ function Swipes({ swipesRef, handleLike, handleDislike}) {
     const POST = [];
 
     // placeholder setPers
-    setPersistantData("postId", "60eca4049a0c8f0015b69b56");
+    //setPersistantData("postId", "60eca4049a0c8f0015b69b56");
     //const [postId, setPostId] = useState("");
     getPersistantData("postId")
 
     const [willLike, setWillLike] = useState(false)
     const [willPass, setWillPass] = useState(false)
-    const [currPost, setPost] = useState({postID: "postID", author: "Author", Title: "Title", score: "Score", Image: "https://i.imgur.com/bDllXgq.jpeg", upvotes: "0", downvotes: "0",});
+    const [currPost, setPost] = useState({postID: "postID", author: "Author", Title: "Title", score: "Score", Image: "https://i.imgur.com/bDllXgq.jpeg",});
+    const [scoreMath, setScore] =useState();
+    var scoretwo = 0;
 
     const renderLeftActions = () => {
         return (
@@ -111,12 +113,13 @@ function Swipes({ swipesRef, handleLike, handleDislike}) {
                     postID: result.data.getRandomPost._id, 
                     author: result.data.getRandomPost.poster.login, 
                     Title: result.data.getRandomPost.title, 
-                    score: "Test Score", 
+                    score: (parseInt(result.data.getRandomPost.upvotes) - parseInt(result.data.getRandomPost.downvotes)), 
                     Image: result.data.getRandomPost.Image,
                     upvotes: result.data.getRandomPost.upvotes,
                     downvotes: result.data.getRandomPost.downvotes,
                   }
                 );
+                setPersistantData("postId", result.data.getRandomPost._id);
                 console.log("got random Post");
               } catch (error) {
                   console.log(error.message);
@@ -124,7 +127,6 @@ function Swipes({ swipesRef, handleLike, handleDislike}) {
             }
              loadPost();
             // add Like function
-              setPersistantData(postId, currPost.postID);
               handleLike();
             }}
 
@@ -166,12 +168,13 @@ function Swipes({ swipesRef, handleLike, handleDislike}) {
                     postID: result.data.getRandomPost._id, 
                     author: result.data.getRandomPost.poster.login, 
                     Title: result.data.getRandomPost.title, 
-                    score: "Test Score", 
                     Image: result.data.getRandomPost.Image,
                     upvotes: result.data.getRandomPost.upvotes,
                     downvotes: result.data.getRandomPost.downvotes,
+                    score: (parseInt(result.data.getRandomPost.upvotes) - parseInt(result.data.getRandomPost.downvotes)), 
                   }
                 );
+                setPersistantData("postId", result.data.getRandomPost._id);
                 console.log("got random Post");
               } catch (error) {
                   console.log(error.message);
@@ -179,7 +182,6 @@ function Swipes({ swipesRef, handleLike, handleDislike}) {
             }
              loadPost();
             //add dislike Function
-            setPersistantData(postId, currPost.postID);
             handleDislike();
             }}
             onSwipeableLeftWillOpen={() => setWillLike(true)}
@@ -199,3 +201,4 @@ function Swipes({ swipesRef, handleLike, handleDislike}) {
   })
 
   export default React.forwardRef((props, ref) => <Swipes swipesRef={ref} {...props}></Swipes>)
+  
