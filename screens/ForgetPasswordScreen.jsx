@@ -108,7 +108,7 @@ export default function ForgetPasswordScreen({ navigation }) {
       //  token: result.data.login.token,
       //});
       // console.log(result.data);
-      setMessage("Email was sent.");	  
+      setMessage("Email was sent.");
       setIsLoading(false);
       //this.state.message = result.data.createUser.message;
       //this.state.isLoading = false;
@@ -135,13 +135,12 @@ export default function ForgetPasswordScreen({ navigation }) {
           placeholder="Email"
           placeholderTextColor="black"
           autoCapitalize="none"
+          returnKeyType="done"
+          onSubmitEditing={() => ResetHandler()}
           onChangeText={(emailInput) => setEmail(emailInput)}
         />
       </View>
-      <TouchableOpacity
-        style={styles.resetBtn}
-        onPress={() => ResetHandler()}
-      >
+      <TouchableOpacity style={styles.resetBtn} onPress={() => ResetHandler()}>
         {isLoading ? (
           <ActivityIndicator />
         ) : (
@@ -149,10 +148,13 @@ export default function ForgetPasswordScreen({ navigation }) {
         )}
       </TouchableOpacity>
       <Text style={{ marginTop: 4 }}>Ready to Login? </Text>
-        <TouchableOpacity onPress={() => navigation.navigate("loginScreenStack", { screen: "Login" })}>
-          <Text>Login Here</Text>
-        </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate("loginScreenStack", { screen: "Login" })
+        }
+      >
+        <Text>Login Here</Text>
+      </TouchableOpacity>
     </View>
   );
-
 }

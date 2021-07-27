@@ -1,4 +1,4 @@
-import React, { Component, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   ActivityIndicator,
   Button,
@@ -67,6 +67,10 @@ export default function RegisterScreen({ navigation }) {
   const [password1, setPassword1] = useState("");
   const [password2, setPassword2] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const password1TEXTINPUT = useRef();
+  const password2TEXTINPUT = useRef();
+  const emailTEXTINPUT = useRef();
 
   const RegisterHandler = async () => {
     try {
@@ -143,6 +147,8 @@ export default function RegisterScreen({ navigation }) {
           placeholder="Username"
           placeholderTextColor="black"
           autoCapitalize="none"
+          returnKeyType="next"
+          onSubmitEditing={() => emailTEXTINPUT.current.focus()}
           onChangeText={(usernameInput) => setUsername(usernameInput)}
         />
       </View>
@@ -152,6 +158,9 @@ export default function RegisterScreen({ navigation }) {
           placeholder="Email"
           placeholderTextColor="black"
           autoCapitalize="none"
+          ref={emailTEXTINPUT}
+          returnKeyType="next"
+          onSubmitEditing={() => password1TEXTINPUT.current.focus()}
           onChangeText={(emailInput) => setEmail(emailInput)}
         />
       </View>
@@ -162,6 +171,9 @@ export default function RegisterScreen({ navigation }) {
           placeholderTextColor="black"
           secureTextEntry={true}
           autoCapitalize="none"
+          ref={password1TEXTINPUT}
+          returnKeyType="next"
+          onSubmitEditing={() => password2TEXTINPUT.current.focus()}
           onChangeText={(password1Input) => setPassword1(password1Input)}
         />
       </View>
@@ -172,6 +184,9 @@ export default function RegisterScreen({ navigation }) {
           placeholderTextColor="black"
           secureTextEntry={true}
           autoCapitalize="none"
+          ref={password2TEXTINPUT}
+          returnKeyType="done"
+          onSubmitEditing={() => RegisterHandler()}
           onChangeText={(password2Input) => setPassword2(password2Input)}
         />
       </View>
@@ -186,10 +201,13 @@ export default function RegisterScreen({ navigation }) {
         )}
       </TouchableOpacity>
       <Text style={{ marginTop: 4 }}>Ready to Login? </Text>
-        <TouchableOpacity onPress={() => navigation.navigate("loginScreenStack", { screen: "Login" })}>
-          <Text>Login Here</Text>
-        </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate("loginScreenStack", { screen: "Login" })
+        }
+      >
+        <Text>Login Here</Text>
+      </TouchableOpacity>
     </View>
   );
-
 }
