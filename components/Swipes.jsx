@@ -38,8 +38,6 @@ function Swipes({ swipesRef, handleLike, handleDislike}) {
     const [willLike, setWillLike] = useState(false)
     const [willPass, setWillPass] = useState(false)
     const [currPost, setPost] = useState({postID: "postID", author: "Author", Title: "Title", score: "Score", Image: "https://i.imgur.com/bDllXgq.jpeg",});
-    const [scoreMath, setScore] =useState();
-    var scoretwo = 0;
 
     const renderLeftActions = () => {
         return (
@@ -107,7 +105,6 @@ function Swipes({ swipesRef, handleLike, handleDislike}) {
                 const result = await JSON.parse(await response.text());
                 console.log(result);
               
-                setPersistantData("token", result.extensions.token);
                 setPost(
                   {
                     postID: result.data.getRandomPost._id, 
@@ -162,7 +159,6 @@ function Swipes({ swipesRef, handleLike, handleDislike}) {
                 const result = await JSON.parse(await response.text());
                 console.log(result);
               
-                setPersistantData("token", result.extensions.token);
                 setPost(
                   {
                     postID: result.data.getRandomPost._id, 
@@ -201,4 +197,3 @@ function Swipes({ swipesRef, handleLike, handleDislike}) {
   })
 
   export default React.forwardRef((props, ref) => <Swipes swipesRef={ref} {...props}></Swipes>)
-  
