@@ -67,15 +67,57 @@ function Swipes({ swipesRef, handleLike, handleDislike}) {
       return (
         <Swipeable
             ref={swipesRef}
-            friction={2}
-            leftThreshold={20}
-            rightThreshold={20}
+            friction={1}
+            leftThreshold={60}
+            rightThreshold={60}
+            overshootRight={false}
+            overshootLeft={false}
+            overshootFriction={20}
             renderLeftActions={renderLeftActions}
             renderRightActions={renderRightActions}
 
             // Left Swipe
             onSwipeableLeftOpen={() => {
             setWillLike(false)
+              // Start like
+              const likeStatus = async () => {
+                try {
+                  let requestBody = {
+                    query: `
+                            mutation {
+                              upDownNeutralvote(voteStatus: "up" contentType: "post" contentId: "${currPost.postID}") {
+                                 contentType contentId userId { _id login }
+                                }
+                            }
+                        `,
+                  };
+              
+                  const response = await fetch("http://largeproject.herokuapp.com/api", {
+                        method: "POST",
+                        body: JSON.stringify(requestBody),
+                        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token},
+                      });
+                  
+                    //console.log(" add replie token" + token);
+                    if (response.status !== 200 && response.status !== 201) {
+                    throw new Error("Something happened on our end LIKE , try again later!");
+                  }
+              
+                  const result = await JSON.parse(await response.text());
+                  console.log(result);
+                    
+                  setPersistantData("token", result.extensions.token);
+                  setToken(result.extensions.token);
+                  //loadReplies(currentID);
+                  console.log("api: added Like");
+                } catch (error) {
+                    console.log(error.message);
+                  } 
+              }
+              // add like end
+              likeStatus();
+              
+
             const loadPost = async () => {
               try {
                 let requestBody = {
@@ -117,19 +159,57 @@ function Swipes({ swipesRef, handleLike, handleDislike}) {
                   }
                 );
                 setPersistantData("postId", result.data.getRandomPost._id);
+                setPersistantData("token", result.extensions.token);
                 console.log("got random Post");
               } catch (error) {
                   console.log(error.message);
                 } 
             }
              loadPost();
-            // add Like function
               handleLike();
             }}
 
             // Right Swipe
             onSwipeableRightOpen={() => {
             setWillPass(false)
+            // start dislike
+            const dislikeStatus = async () => {
+              try {
+                let requestBody = {
+                  query: `
+                          mutation {
+                            upDownNeutralvote(voteStatus: "down" contentType: "post" contentId: "${currPost.postID}") {
+                               contentType contentId userId { _id login }
+                              }
+                          }
+                      `,
+                };
+            
+                const response = await fetch("http://largeproject.herokuapp.com/api", {
+                      method: "POST",
+                      body: JSON.stringify(requestBody),
+                      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token},
+                    });
+                
+                  //console.log(" add replie token" + token);
+                  if (response.status !== 200 && response.status !== 201) {
+                  throw new Error("Something happened on our end DISLIKE , try again later!");
+                }
+            
+                const result = await JSON.parse(await response.text());
+                console.log(result);
+                  
+                setPersistantData("token", result.extensions.token);
+                setToken(result.extensions.token);
+                //loadReplies(currentID);
+                console.log("api: added Like");
+              } catch (error) {
+                  console.log(error.message);
+                } 
+            }
+            // add dislike end
+            dislikeStatus();
+            
             const loadPost = async () => {
               try {
                 let requestBody = {
@@ -177,7 +257,6 @@ function Swipes({ swipesRef, handleLike, handleDislike}) {
                 } 
             }
              loadPost();
-            //add dislike Function
             handleDislike();
             }}
             onSwipeableLeftWillOpen={() => setWillLike(true)}
@@ -193,6 +272,7 @@ function Swipes({ swipesRef, handleLike, handleDislike}) {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
+      overflow: 'hidden',
     },
   })
 
