@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { SafeAreaView, View, StyleSheet, Image, Text } from "react-native";
 import { getPersistantData, setPersistantData } from "../context/Storage";
+import { useEffect } from "react";
 
 import {
   DrawerContentScrollView,

@@ -12,6 +12,8 @@ import { CardStyleInterpolators } from "@react-navigation/stack";
 // Import Custom Sidebar
 import SidebarMenu from "./components/SidebarMenu";
 
+import { useEffect } from "react";
+
 // Screens
 import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
@@ -123,9 +125,9 @@ function mainScreenStack({ navigation }) {
       <Stack.Screen
         name="Main"
         component={MainScreen}
-        options={{
-          headerTitle: (props) => <HeaderButton {...props} />, //Set Header Title as add post button
-        }}
+        options={({ navigation, route }) => ({
+          headerTitle: () => <HeaderButton {...navigation} />,
+        })}
       />
       <Stack.Screen
         name="AddPost"
