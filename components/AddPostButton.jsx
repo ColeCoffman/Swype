@@ -5,7 +5,7 @@ import{FontAwesome5, FontAwesome, MaterialIcons} from'@expo/vector-icons'
 
 export function HeaderButton() {
   return (
-    <TouchableOpacity >
+    <TouchableOpacity onPress={() => navigation.navigate("mainScreenStack", { screen: "AddPost" })}>
       <FontAwesome5 name = "plus-square" size = {35} color = "white"></FontAwesome5>
     </TouchableOpacity>
   );

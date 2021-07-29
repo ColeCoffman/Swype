@@ -18,6 +18,7 @@ import RegisterScreen from "./screens/RegisterScreen";
 import MainScreen from "./screens/MainScreen";
 import PostScreen from "./screens/PostScreen";
 import ForgetPasswordScreen from "./screens/ForgetPasswordScreen";
+import AddPostScreen from "./screens/AddPostScreen";
 
 // Add Post Button
 import { HeaderButton } from "./components/AddPostButton";
@@ -47,7 +48,7 @@ const NavigationDrawerStructure = (props) => {
   );
 };
 
-// Login and Register Scren Stack
+// Login and Register Screen Stack
 function loginScreenStack({ navigation }) {
   return (
     <Stack.Navigator initialRouteName="Login">
@@ -122,6 +123,13 @@ function mainScreenStack({ navigation }) {
       <Stack.Screen
         name="Main"
         component={MainScreen}
+        options={{
+          headerTitle: (props) => <HeaderButton {...props} />, //Set Header Title as add post button
+        }}
+      />
+      <Stack.Screen
+        name="AddPost"
+        component={AddPostScreen}
         options={{
           headerTitle: (props) => <HeaderButton {...props} />, //Set Header Title as add post button
         }}
