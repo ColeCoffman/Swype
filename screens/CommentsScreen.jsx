@@ -23,20 +23,8 @@ const config = {
   directionalOffsetThreshold: 80,
 };
 
-/*const CommentItem = ({ comment, onPress, backgroundColor, textColor }) => (
-  <TouchableOpacity onPress={onPress} style={[styles.comment, backgroundColor]}>
-    <Text style={[styles.name, textColor]}>{comment.login}</Text>
-  </TouchableOpacity>
-);*/
-/*      <CommentItem style={styles.test}
-        comment={item}
-        onPress={() => setID(item.id)}
-        backgroundColor={{ backgroundColor }}
-        textColor={{ color }}
-      />*/
 
-// load in end
-//let newComments = true;
+
 export default function CommentsScreen({ navigation }) {
   const [newComments, setNewComments] = useState("0");
   getPersistantData("newComments")
@@ -44,9 +32,6 @@ export default function CommentsScreen({ navigation }) {
     setNewComments(result);
   })
   .catch((err) => console.error(err));
-  //let newComments = true;
-  //console.log(newComments)
-  //setNewComments(false);
 
   const [token, setToken] = useState("");
   const [postId, setPostId] = useState("");
@@ -79,7 +64,7 @@ export default function CommentsScreen({ navigation }) {
       }
   
       const result = await JSON.parse(await response.text());
-      console.log(result);
+      //console.log(result);
       const length = result.data.getPostComments.length;
       for (let i=0; i<length; i++) {
         let likeStatus = result.data.getPostComments[i].userVoteStatus;
@@ -109,7 +94,7 @@ export default function CommentsScreen({ navigation }) {
       }
       //not returning a token
       setPersistantData("token", result.extensions.token);
-      console.log("got all comments");
+      //console.log("got all comments");
       setComments(COMMENTS)
     } catch (error) {
         console.log(error.message);
@@ -125,9 +110,9 @@ export default function CommentsScreen({ navigation }) {
     setToken(result);
   })
   .catch((err) => console.error(err));
-  console.log("TokenLoadedInComments: " + token);
+  //console.log("TokenLoadedInComments: " + token);
   // placeholder setPers
-  //setPersistantData("postId", "60f9d295ab3c97001559286a");
+  setPersistantData("postId", "60f9d295ab3c97001559286a");
   //const [postId, setPostId] = useState("");
   getPersistantData("postId")
   .then((result) => {
@@ -135,76 +120,11 @@ export default function CommentsScreen({ navigation }) {
     setTarget({nameT: "Post", targetId: result, handler: 1});
   })
   .catch((err) => console.error(err));
-  console.log("PostIdLoadedInComments: " + postId);
+  //console.log("PostIdLoadedInComments: " + postId);
   //setNewComments(false);
   //newComments = false;
   setPersistantData("newComments", "0");
-//setNewComments(false);
-  //loadComments();
-  //const COMMENTS = [];
-  /*const loadComments = async () => {
-    try {
-      let requestBody = {
-        query: `
-                query {
-                    getPostComments(postId: "${postId}") {
-                      _id
-                      commenter{ login }
-                      Content
-                      upvotes
-                      downvotes
-                      userVoteStatus
-                    }
-                }
-            `,
-      };
 
-      const response = await fetch("http://largeproject.herokuapp.com/api", {
-            method: "POST",
-            body: JSON.stringify(requestBody),
-            headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token},
-          });
-      if (response.status !== 200 && response.status !== 201) {
-        throw new Error("Something happened on our end, try again later!");
-      }
-  
-      const result = await JSON.parse(await response.text());
-      console.log(result);
-      const length = result.data.getPostComments.length;
-      for (let i=0; i<length; i++) {
-        let likeStatus = result.data.getPostComments[i].userVoteStatus;
-        var like;
-        var dislike;
-        if (likeStatus === 'upvote') {
-          like = true;
-          dislike = false;
-        } else if (likeStatus === 'downvote') {
-          like = false;
-          dislike = true;
-        } else if (likeStatus === 'neutral') {
-          like = false;
-          dislike = false;  
-        }
-        let loadedComment = {
-          id: result.data.getPostComments[i]._id,
-          login: result.data.getPostComments[i].commenter.login,
-          comment: result.data.getPostComments[i].Content,
-          upvotes: result.data.getPostComments[i].upvotes,
-          downvotes: result.data.getPostComments[i].downvotes,
-          like: like,
-          dislike: dislike,
-        };
-        //console.log("1 comment" + loadedComment);
-        COMMENTS.push(loadedComment);   
-      }
-      //not returning a token
-      setPersistantData("token", result.extensions.token);
-      console.log("got all comments");
-      setComments(COMMENTS)
-    } catch (error) {
-        console.log(error.message);
-      } 
-  }*/
    loadComments();
    //console.log(COMMENTS);
 } // end of what to load when page opens
@@ -247,7 +167,7 @@ export default function CommentsScreen({ navigation }) {
       }
   
       const result = await JSON.parse(await response.text());
-      console.log(result);
+      //console.log(result);
       const length = result.data.getCommentReplies.length;
       for (let i=0; i<length; i++) {
         let likeStatus = result.data.getCommentReplies[i].userVoteStatus;
@@ -279,7 +199,7 @@ export default function CommentsScreen({ navigation }) {
       setPersistantData("token", result.extensions.token);
       //setID(commentId)
       
-      console.log("got all replies");
+      //console.log("got all replies");
       setReplies(REPLIES);
       return commentId;
     } catch (error) {
@@ -312,12 +232,12 @@ export default function CommentsScreen({ navigation }) {
       }
   
       const result = await JSON.parse(await response.text());
-      console.log(result);
+      //console.log(result);
         
       setPersistantData("token", result.extensions.token);
       setToken(result.extensions.token);
       //loadReplies(currentID);
-      console.log("cleared like");
+      //console.log("cleared like");
     } catch (error) {
         console.log(error.message);
       } 
@@ -348,12 +268,12 @@ export default function CommentsScreen({ navigation }) {
       }
   
       const result = await JSON.parse(await response.text());
-      console.log(result);
+      //console.log(result);
         
       setPersistantData("token", result.extensions.token);
       setToken(result.extensions.token);
       //loadReplies(currentID);
-      console.log("api: added Like");
+      //console.log("api: added Like");
     } catch (error) {
         console.log(error.message);
       } 
@@ -384,12 +304,12 @@ export default function CommentsScreen({ navigation }) {
       }
   
       const result = await JSON.parse(await response.text());
-      console.log(result);
+      //console.log(result);
         
       setPersistantData("token", result.extensions.token);
       setToken(result.extensions.token);
       //loadReplies(currentID);
-      console.log("api: added dislike");
+      //console.log("api: added dislike");
     } catch (error) {
         console.log(error.message);
       } 
@@ -435,12 +355,12 @@ export default function CommentsScreen({ navigation }) {
           <TouchableOpacity onPress={() => likeReplie(item.id, item.like, item.dislike)}>
             {item.like ? (
               <Image
-              style={{ marginLeft: 15 }}
+              style={{ marginRight: 5 }}
               resizeMode="contain"
               source={require("../assets/likedIcon.png")}
             />
             ) : <Image
-                style={{ marginLeft: 15 }}
+                style={{ marginRight: 5 }}
                 resizeMode="contain"
                 source={require("../assets/likeIcon.png")}
               />}
@@ -449,19 +369,19 @@ export default function CommentsScreen({ navigation }) {
           <TouchableOpacity onPress={() => dislikeReplie(item.id, item.like, item.dislike)}>
             {item.dislike ? (
               <Image
-              style={{ marginLeft: 15 }}
+              style={{ marginLeft: 15, marginRight: 5}}
               resizeMode="contain"
               source={require("../assets/dislikedIcon.png")}
             />
             ) : <Image
-                style={{ marginLeft: 15 }}
+                style={{ marginLeft: 15, marginRight: 5}}
                 resizeMode="contain"
                 source={require("../assets/dislikeIcon.png")}
               />}
           </TouchableOpacity>
           <Text >{item.downvotes} </Text>
           <TouchableOpacity onPress={() => setTarget({nameT: item.login, targetId: item.id, handler: 3})}>
-            <Text >REPLY</Text>
+            <Text style={{ marginLeft: 10}}>REPLY</Text>
           </TouchableOpacity>
         </View>
       </View> 
@@ -497,9 +417,9 @@ export default function CommentsScreen({ navigation }) {
   const renderComment = ({ item }) => {
     //const backgroundColor = item.id === currentID ? "#6e3b6e" : "#f9c2ff";
     const show = item.id === currentID ? true : false;
-
+    const replieNum = 0 === allReplies.length ? false : true;
     return (
-      <View>
+      <View style={styles.comment}>
         <View style={styles.row}>
           <Text style={styles.name}>{item.login}</Text>
         </View>
@@ -508,12 +428,12 @@ export default function CommentsScreen({ navigation }) {
           <TouchableOpacity onPress={() => likeComment(item.id, item.like, item.dislike)}>
             {item.like ? (
               <Image
-              style={{ marginLeft: 15 }}
+              style={{ marginRight: 5 }}
               resizeMode="contain"
               source={require("../assets/likedIcon.png")}
             />
             ) : <Image
-                style={{ marginLeft: 15 }}
+                style={{ marginRight: 5 }}
                 resizeMode="contain"
                 source={require("../assets/likeIcon.png")}
               />}
@@ -522,19 +442,19 @@ export default function CommentsScreen({ navigation }) {
           <TouchableOpacity onPress={() => dislikeComment(item.id, item.like, item.dislike)}>
             {item.dislike ? (
               <Image
-              style={{ marginLeft: 15 }}
+              style={{ marginLeft: 15, marginRight: 5}}
               resizeMode="contain"
               source={require("../assets/dislikedIcon.png")}
             />
             ) : <Image
-                style={{ marginLeft: 15 }}
+                style={{ marginLeft: 15, marginRight: 5}}
                 resizeMode="contain"
                 source={require("../assets/dislikeIcon.png")}
               />}
           </TouchableOpacity>
           <Text >{item.downvotes} </Text>
           <TouchableOpacity onPress={() => setTarget({nameT: item.login, targetId: item.id, handler: 2})}>
-            <Text >REPLY</Text>
+            <Text style={{ marginLeft: 10}}>REPLY</Text>
           </TouchableOpacity>
         </View>
         <TouchableOpacity onPress={() => loadReplies(item.id).then((result) => {
@@ -543,13 +463,14 @@ export default function CommentsScreen({ navigation }) {
           <Text style={styles.seeReplies}> Replies</Text>
         </TouchableOpacity>
         {show ? (
+          replieNum ? (
           <FlatList
-          //style={[hide]}
           data={allReplies}
           renderItem={renderReplie}
           keyExtractor={(item) => item.id}
           //extraData={currentID}
         />
+        ) : <Text >No Replies found</Text>
         ) : null}  
       </View>
     );
@@ -584,13 +505,13 @@ export default function CommentsScreen({ navigation }) {
             headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token},
           });
       
-        console.log(" add Comment token" + token);
+        //console.log(" add Comment token" + token);
         if (response.status !== 200 && response.status !== 201) {
         throw new Error("Something happened on our end, try again later!");
       }
   
       const result = await JSON.parse(await response.text());
-      console.log(result);
+      //console.log(result);
       // update locally
       setComments(currentComments => [
         ...currentComments,
@@ -607,7 +528,7 @@ export default function CommentsScreen({ navigation }) {
       setPersistantData("token", result.extensions.token);
       setToken(result.extensions.token);
 
-      console.log("added comment");
+      //console.log("added comment");
     } catch (error) {
         console.log(error.message);
       } 
@@ -635,13 +556,13 @@ export default function CommentsScreen({ navigation }) {
             headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token},
           });
       
-        console.log(" add replie token" + token);
+        //console.log(" add replie token" + token);
         if (response.status !== 200 && response.status !== 201) {
         throw new Error("Something happened on our end, try again later!");
       }
   
       const result = await JSON.parse(await response.text());
-      console.log(result);
+      //console.log(result);
       // update locally
       
       if (currentID === messageTarget.targetId) {
@@ -661,7 +582,7 @@ export default function CommentsScreen({ navigation }) {
       setPersistantData("token", result.extensions.token);
       setToken(result.extensions.token);
 
-      console.log("added replie");
+      //console.log("added replie");
     } catch (error) {
         console.log(error.message);
       } 
@@ -689,13 +610,13 @@ export default function CommentsScreen({ navigation }) {
             headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token},
           });
       
-        console.log(" add replie token" + token);
+        //console.log(" add replie token" + token);
         if (response.status !== 200 && response.status !== 201) {
         throw new Error("Something happened on our end, try again later!");
       }
   
       const result = await JSON.parse(await response.text());
-      console.log(result);
+      //console.log(result);
       // update locally
       
         setReplies(currentReplies => [
@@ -714,7 +635,7 @@ export default function CommentsScreen({ navigation }) {
       setPersistantData("token", result.extensions.token);
       setToken(result.extensions.token);
 
-      console.log("added replie");
+      //console.log("added replie");
     } catch (error) {
         console.log(error.message);
       } 
@@ -802,14 +723,6 @@ const styles = StyleSheet.create({
     //alignItems: "center",
     //justifyContent: "center",
   },
-  inputView: {
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    width: "65%",
-    height: 135,
-    marginBottom: 20,
-    alignItems: "center",
-  },
   TextInput: {
     height:80,
     flex: 1,
@@ -823,8 +736,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     height: 80,
     alignItems: "center",
-  //justifyContent: "center",
-    marginTop: 25,
+    justifyContent: "center",
     marginBottom: 10,
     marginRight: 10,
     backgroundColor: "#007",
@@ -841,24 +753,24 @@ const styles = StyleSheet.create({
     height: "20%",
   },
   comment: {
-    padding: 10,
+    //padding: 15,
+    marginLeft: 12,
+    marginRight: 12,
+    marginBottom: 10,
   },
   name: {
     color: "black",
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: "bold",
-  },
-  date: {
-    color: "grey",
-    fontSize: 13,
-    //fontWeight: "bold",
   },
   bodyOfComment: {
     color: "black",
-    fontSize: 12,
+    fontSize: 16,
   },
   seeReplies: {
     color: "blue",
+    fontSize: 16,
+    marginTop: 10,
   },
   test: {
     width: 20,
@@ -866,6 +778,8 @@ const styles = StyleSheet.create({
   },
   reply: {
     color: "blue",
+    marginTop: 10,
+    fontSize: 16,
   },
   replieIndent: {
     marginLeft: 25,
