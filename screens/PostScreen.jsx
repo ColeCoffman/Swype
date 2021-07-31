@@ -28,6 +28,8 @@ export default function PostScreen({ navigation }) {
 	},  
   ];
   
+  const [length, setLength] = useState("0");
+  
   const loadPosts = async (last) => {
     try {
       let requestBody = {
@@ -58,6 +60,7 @@ export default function PostScreen({ navigation }) {
 	  
       const result = await JSON.parse(await response.text());
       const length = result.data.userPosts.length;
+	  setLength(length);
       for (let i=0; i<length; i++) {   
 		ARRAY.push({picture: result.data.userPosts[i].Image, id: result.data.userPosts[i]._id});
       }
@@ -72,17 +75,37 @@ export default function PostScreen({ navigation }) {
 		loadPosts(result);
 	  })
 	  .catch((err) => console.error(err));
-				
-  return (
-    <View style={styles.container}>
-      <FlatList
-        data={ARRAY}
-        renderItem={({item}) => (
-		<Image source={{uri:item.picture}}  style={{width:60, height:60,borderRadius:4}} />
-		)}
-      />
+	
+const renderPost = ({ item }) => {
+    return (
+	
+		<View>
+      <TouchableOpacity onPress={() => 
+		navigation.navigate("mainScreenStack", { screen: "Comments" })}>
+        <View style={{}}>
+			<Image source={{ uri: item.picture }} style={{ width: 200, height: 200 }} />
+		</View>
+      </TouchableOpacity>
     </View>
-  );
+    )
+	
+  }
+  
+  if(length > 1)
+	  return (
+		<View style={styles.container}>
+		  <FlatList
+			data={ARRAY}
+			renderItem={renderPost}
+		  />
+		</View>
+	  );
+	  
+	  return (
+		<View style={styles.container}>
+		    <Text>You have no posts.</Text>
+		</View>
+	  );
 }
 
 const styles = StyleSheet.create({
