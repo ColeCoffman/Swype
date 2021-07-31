@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   ActivityIndicator,
   Button,
@@ -20,127 +20,102 @@ import { getPersistantData } from "../context/Storage";
 import { setPersistantData } from "../context/Storage";
 
 export default function PostScreen({ navigation }) {
-  const [isLoading, setLoading] = useState(true);
-  const [Array, setArray] = useState([]);
 
-  useEffect(() => {
-    getPostHelper();
-  }, []);
-
-  const getPostHelper = () => {
-    getPosts()
-      .then((ARRAY) => {
-        // console.log("getPosts: ", ARRAY);
-        setArray(ARRAY);
-        setLoading(false);
-      })
-      .catch((error) => console.error(error));
-  };
-
-  async function getPosts() {
-    return await getPersistantData("token")
-      .then((result) => {
-        // console.log("1: ", result);
-        return loadPosts(result);
-      })
-      .then((result) => {
-        // console.log("2: ", result);
-        return result;
-      })
-      .catch((err) => console.error(err));
-  }
-
-  async function loadPosts(token) {
-    let ARRAY = [];
+  const ARRAY = [
+    {
+		picture: '',
+		id: '',
+	},  
+  ];
+  
+  const [length, setLength] = useState("0");
+  
+  const loadPosts = async (last) => {
     try {
       let requestBody = {
         query: `
                 query { 
-        userPosts{ 
-        _id 
-        poster{ _id login email verified } 
-        title 
-        Image 
-        Content 
-        upvotes 
-        downvotes 
-        userVoteStatus} 
-        }
+				userPosts{ 
+				_id 
+				poster{ _id login email verified } 
+				title 
+				Image 
+				Content 
+				upvotes 
+				downvotes 
+				userVoteStatus} 
+				}
             `,
       };
-
+	
       const response = await fetch("http://largeproject.herokuapp.com/api", {
-        method: "POST",
-        body: JSON.stringify(requestBody),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + token,
-        },
-      });
-
+            method: "POST",
+            body: JSON.stringify(requestBody),
+            headers: { "Content-Type": "application/json", "Authorization": "Bearer " + last},
+          });
+		  
       if (response.status !== 200 && response.status !== 201) {
         throw new Error("Something happened on our end, try again later!");
       }
-
+	  
       const result = await JSON.parse(await response.text());
       const length = result.data.userPosts.length;
-      for (let i = 0; i < length; i++) {
-        ARRAY.push({
-          picture: result.data.userPosts[i].Image,
-          id: result.data.userPosts[i]._id,
-        });
+	  setLength(length);
+      for (let i=0; i<length; i++) {   
+		ARRAY.push({picture: result.data.userPosts[i].Image, id: result.data.userPosts[i]._id});
       }
       //not returning a token
       setPersistantData("token", result.extensions.token);
-
-      // console.log("RETURN: ", ARRAY);
-      return ARRAY;
     } catch (error) {
-      console.log(error.message);
-    }
+        console.log(error.message);
+      }   
   }
-
-  const renderPost = ({ item }) => {
+	  getPersistantData("token")
+	  .then((result) => {
+		loadPosts(result);
+	  })
+	  .catch((err) => console.error(err));
+	
+const renderPost = ({ item }) => {
     return (
-      <View>
-        <TouchableOpacity
-          onPress={async () => {
-            setPersistantData("postId", item.id);
-            setPersistantData("newComments", "1");
-            navigation.navigate("mainScreenStack", { screen: "Comments" });
-          }}
-        >
-          <View style={{}}>
-            <Image
-              source={{ uri: item.picture }}
-              style={{ width: 200, height: 200 }}
-            />
-          </View>
-        </TouchableOpacity>
-      </View>
-    );
-  };
-
-  if (isLoading) {
-    return (
-      <View
-        style={{ alignContent: "center", justifyContent: "center", flex: 1 }}
-      >
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
-  return (
-    <View style={styles.container}>
-      <FlatList data={Array} renderItem={renderPost} />
+	
+	  <View>
+      <TouchableOpacity onPress={async() => {
+	  setPersistantData("postId", item.id);  
+	  setPersistantData("newComments", "1");
+	  navigation.navigate("mainScreenStack", { screen: "Comments" })
+	  }}
+	  >
+        <View style={{}}>
+			<Image source={{ uri: item.picture }} style={{ width: 200, height: 200 }} />
+		</View>
+      </TouchableOpacity>
     </View>
-  );
+    )
+	
+  }
+  
+  if(length > 1)
+	  return (
+		<View style={styles.container}>
+		  <FlatList
+			data={ARRAY}
+			renderItem={renderPost}
+		  />
+		</View>
+	  );
+	  
+	  return (
+		<View style={styles.container}>
+		    <Text>You have no posts.</Text>
+		</View>
+	  );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    paddingTop: 22,
+   flex: 1,
+   paddingTop: 22
   },
   item: {
     padding: 10,
@@ -149,7 +124,7 @@ const styles = StyleSheet.create({
   },
   row: {
     //backgroundColor: "#fff",
-    flexDirection: "row",
+    flexDirection: "row"
     //flex: 1,
     //alignItems: "center",
     //justifyContent: "center",
@@ -163,7 +138,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   TextInput: {
-    height: 80,
+    height:80,
     flex: 1,
     padding: 10,
     marginTop: 25,
@@ -175,7 +150,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     height: 80,
     alignItems: "center",
-    //justifyContent: "center",
+  //justifyContent: "center",
     marginTop: 25,
     marginBottom: 10,
     marginRight: 10,
@@ -189,7 +164,7 @@ const styles = StyleSheet.create({
     color: "red",
     marginBottom: 10,
   },
-  commentSpace: {
+  commentSpace : {
     height: "20%",
   },
   comment: {
@@ -214,12 +189,12 @@ const styles = StyleSheet.create({
   },
   test: {
     width: 20,
-    marginRight: 90,
+    marginRight: 90
   },
   reply: {
     color: "blue",
   },
   replieIndent: {
     marginLeft: 25,
-  },
+  }
 });
