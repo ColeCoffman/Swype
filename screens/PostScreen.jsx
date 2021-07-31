@@ -79,9 +79,13 @@ export default function PostScreen({ navigation }) {
 const renderPost = ({ item }) => {
     return (
 	
-		<View>
-      <TouchableOpacity onPress={() => 
-		navigation.navigate("mainScreenStack", { screen: "Comments" })}>
+	  <View>
+      <TouchableOpacity onPress={async() => {
+	  setPersistantData("postId", item.id);  
+	  setPersistantData("newComments", "1");
+	  navigation.navigate("mainScreenStack", { screen: "Comments" })
+	  }}
+	  >
         <View style={{}}>
 			<Image source={{ uri: item.picture }} style={{ width: 200, height: 200 }} />
 		</View>
