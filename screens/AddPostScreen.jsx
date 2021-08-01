@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { Component } from 'react';
+import { View, StyleSheet } from 'react-native';
 import {
   ActivityIndicator,
   Button,
-  Platform,
-  View,
   Text,
   TextInput,
-  StyleSheet,
   Image,
   TouchableOpacity,
   FlatList,
@@ -14,51 +12,44 @@ import {
   StatusBar,
 } from "react-native";
 
-import * as ImagePicker from "expo-image-picker";
-import { getPersistantData } from "../context/Storage";
-import { setPersistantData } from "../context/Storage";
+import t from 'tcomb-form-native'; // 0.6.9
 
-const config = {
-  velocityThreshold: 0.3,
-  directionalOffsetThreshold: 80,
-};
+const Form = t.form.Form;
 
-export default function AddPost() {
-  const [image, setImage] = useState(null);
+const User = t.struct({
+  title: t.String,
+  url: t.String,
+  caption: t.maybe(t.String),
+  agreeToTerms: t.Boolean
+});
 
-  useEffect(() => {
-    (async () => {
-      if (Platform.OS !== "web") {
-        const { status } =
-          await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== "granted") {
-          alert("Sorry, we need camera roll permissions to make this work!");
-        }
-      }
-    })();
-  }, []);
+export default class AddPost extends Component{
+  handleSubmit = () => {
+    const value = this._form.getValue(); // use that ref to get the form value
+    console.log('value: ', value);
+  }
 
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    console.log(result);
-
-    if (!result.cancelled) {
-      setImage(result.uri);
-    }
-  };
-
-  return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Button title="Pick an image from camera roll" onPress={pickImage} />
-      {image && (
-        <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
-      )}
-    </View>
-  );
+  render() {
+    return (
+      <View style={styles.container}>
+        <Form 
+          ref={c => this._form = c} // assign a ref
+          type={User} 
+        />
+        <Button
+          title="Share Post"
+          onPress={this.handleSubmit}
+        />
+      </View>
+    );
+  }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    justifyContent: 'center',
+    marginTop: 50,
+    padding: 20,
+    backgroundColor: '#ffffff',
+  },
+});
