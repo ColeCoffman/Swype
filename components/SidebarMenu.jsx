@@ -49,7 +49,6 @@ const SidebarMenu = (props) => {
             props.navigation.navigate("mainScreenStack", { screen: "Posts" })
           }
         />
-        <DrawerItem label="COMMENTS" />
         <DrawerItem
           label="LOGOUT"
           onPress={async () => {
