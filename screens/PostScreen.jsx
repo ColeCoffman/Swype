@@ -85,9 +85,11 @@ export default function PostScreen({ navigation }) {
       const result = await JSON.parse(await response.text());
       const length = result.data.userPosts.length;
       for (let i = 0; i < length; i++) {
-        ARRAY.push({
+          ARRAY.push({
           picture: result.data.userPosts[i].Image,
           id: result.data.userPosts[i]._id,
+		  score: parseInt(parseInt(result.data.userPosts[i].upvotes) - parseInt(result.data.userPosts[i].downvotes)),
+		  title: result.data.userPosts[i].title,
         });
       }
       //not returning a token
@@ -110,12 +112,15 @@ export default function PostScreen({ navigation }) {
             navigation.navigate("mainScreenStack", { screen: "Comments" });
           }}
         >
-          <View style={{}}>
-            <Image
-              source={{ uri: item.picture }}
-              style={{ width: 200, height: 200 }}
-            />
-          </View>
+		  
+		  <View style={styles.listItem}>
+		  <Image source={{uri:item.picture}}  style={{width:60, height:60,borderRadius:30}} />
+		  <View style={{alignItems:"center",flex:1}}>
+			<Text style={{fontWeight:"bold"}}>{item.title}</Text>
+			<Text>{"SCORE: " + item.score}</Text>
+		  </View>
+		  </View>
+		  
         </TouchableOpacity>
       </View>
     );
@@ -140,7 +145,18 @@ export default function PostScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 22,
+    backgroundColor: '#F7F7F7',
+    marginTop:60
+  },
+  listItem:{
+    margin:10,
+    padding:10,
+    backgroundColor:"#FFF",
+    width:"80%",
+    flex:1,
+    alignSelf:"center",
+    flexDirection:"row",
+    borderRadius:5
   },
   item: {
     padding: 10,
