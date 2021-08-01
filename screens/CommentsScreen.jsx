@@ -110,9 +110,9 @@ export default function CommentsScreen({ navigation }) {
     setToken(result);
   })
   .catch((err) => console.error(err));
-  //console.log("TokenLoadedInComments: " + token);
+  console.log("TokenLoadedInComments: " + token);
   // placeholder setPers
-  // setPersistantData("postId", "60f9d295ab3c97001559286a");
+  //setPersistantData("postId", "60f9d295ab3c97001559286a");
   //const [postId, setPostId] = useState("");
   getPersistantData("postId")
   .then((result) => {
@@ -648,6 +648,8 @@ export default function CommentsScreen({ navigation }) {
     } else if (messageTarget.handler === 3) {
       addReplieReplieHandler();
     } 
+    //setComment('');
+    //this.state = {text: ""};
   }
 
 // add coments code End
@@ -666,13 +668,13 @@ export default function CommentsScreen({ navigation }) {
     >*/}
       <SafeAreaView style={styles.container}>
         <View style={styles.commentSpace}>
-       {/* <GestureRecognizer
+       <GestureRecognizer
           onSwipeDown={(state) => onSwipeDown(state)}
           config={config}
           style={{
             flex: 1,
           }}
-        >*/}
+        >
           <TouchableOpacity style={styles.reply} onPress={() => setTarget({nameT: "Post", targetId: postId, handler: 1})}>
               <Text style={styles.reply}>Select Reply to Post</Text>
           </TouchableOpacity>
@@ -681,9 +683,12 @@ export default function CommentsScreen({ navigation }) {
               style={styles.TextInput}
               placeholder="Comment"
               //placeholderTextColor="black"
+              returnKeyType="done"
+              blurOnSubmit
+              onSubmitEditing={() => addHandler()}
               autoCapitalize="none"
               multiline
-              numberOfLines={5}
+              numberOfLines={3}
               maxLength={256}
               onChangeText={(commentInput) => setComment(commentInput)}
             />
@@ -691,7 +696,7 @@ export default function CommentsScreen({ navigation }) {
               <Text style={styles.commentText}>Reply to {messageTarget.nameT}</Text>
             </TouchableOpacity>
           </View>
-        {/*</GestureRecognizer>*/}
+        </GestureRecognizer>
         </View>
         <View style={{height: "80%",}}>
           <FlatList
