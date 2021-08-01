@@ -112,7 +112,7 @@ export default function CommentsScreen({ navigation }) {
   .catch((err) => console.error(err));
   //console.log("TokenLoadedInComments: " + token);
   // placeholder setPers
-  setPersistantData("postId", "60f9d295ab3c97001559286a");
+  // setPersistantData("postId", "60f9d295ab3c97001559286a");
   //const [postId, setPostId] = useState("");
   getPersistantData("postId")
   .then((result) => {
