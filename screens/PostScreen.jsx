@@ -114,7 +114,7 @@ export default function PostScreen({ navigation }) {
         >
 		  
 		  <View style={styles.listItem}>
-		  <Image source={{uri:item.picture}}  style={{width:60, height:60,borderRadius:30}} />
+		  <Image source={{uri:item.picture}}  style={{width:120, height:120,borderRadius:60}} />
 		  <View style={{alignItems:"center",flex:1}}>
 			<Text style={{fontWeight:"bold"}}>{item.title}</Text>
 			<Text>{"SCORE: " + item.score}</Text>
