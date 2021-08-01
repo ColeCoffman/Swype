@@ -316,35 +316,58 @@ export default function CommentsScreen({ navigation }) {
   }
   // add dislike end
 
-    // update like and dislike start
+  // update like and dislike start
+  const updateReplies = (item, index, like, dislike, likeNum, dislikeNum) => {
+    // update comments start
+    const FLOAD = [];
+    for (let i = 0; i <index; i++) FLOAD.push(allReplies[i]); 
+    FLOAD.push(      {
+      id: item.id,
+      login: item.login,
+      comment: item.comment,
+      upvotes: item.upvotes + likeNum,
+      downvotes: item.downvotes + dislikeNum,
+      like: like,
+      dislike: dislike,
+    }); 
+    for (let i = index+1; i < allReplies.length; i++) FLOAD.push(allReplies[i]); 
+    setReplies(FLOAD);
+    // update comments end
+}
   //likeReplie(item.like)
-  const likeReplie = async (replyId, likeS, dislikeS) => {
+  const likeReplie = async (item, replyId, likeS, dislikeS, index) => {
     // change to neutral start
     if (likeS === true) {
+      updateReplies(item, index, false, false, -1, 0);
       await neutralStatus(replyId, "reply");
     } else if (dislikeS === true) {
+      updateReplies(item, index, true, false, 1, -1);
       await neutralStatus(replyId, "reply");
       await likeStatus(replyId, "reply");
     } else {
+      updateReplies(item, index, true, false, 1, 0);
       await likeStatus(replyId, "reply");
     }
-    loadReplies(currentID);
+    //loadReplies(currentID);
   }
-  const dislikeReplie = async (replyId, likeS, dislikeS) => {
+  const dislikeReplie = async (item, replyId, likeS, dislikeS, index) => {
     // change to neutral start
     if (dislikeS === true) {
+      updateReplies(item, index, false, false, 0, -1);
       await neutralStatus(replyId, "reply");
     } else if (likeS === true) {
+      updateReplies(item, index, false, true, -1, 1);
       await neutralStatus(replyId, "reply");
       await dislikeStatus(replyId, "reply");
     } else {
+      updateReplies(item, index, false, true, 0, 1);
       await dislikeStatus(replyId, "reply");
     }
-    loadReplies(currentID);
+    //loadReplies(currentID);
   }
   // update like and dislike end
   // replie falt list start
-  const renderReplie = ({ item }) => {
+  const renderReplie = ({ item, index }) => {
     return (
       <View style={styles.replieIndent}>
         <View style={styles.row}>
@@ -352,7 +375,7 @@ export default function CommentsScreen({ navigation }) {
         </View>
         <Text style={styles.bodyOfComment}>{item.comment}</Text>
         <View style={styles.row}>
-          <TouchableOpacity onPress={() => likeReplie(item.id, item.like, item.dislike)}>
+          <TouchableOpacity onPress={() => likeReplie(item, item.id, item.like, item.dislike, index)}>
             {item.like ? (
               <Image
               style={{ marginRight: 5 }}
@@ -366,7 +389,7 @@ export default function CommentsScreen({ navigation }) {
               />}
           </TouchableOpacity>
           <Text >{item.upvotes} </Text>
-          <TouchableOpacity onPress={() => dislikeReplie(item.id, item.like, item.dislike)}>
+          <TouchableOpacity onPress={() => dislikeReplie(item, item.id, item.like, item.dislike, index)}>
             {item.dislike ? (
               <Image
               style={{ marginLeft: 15, marginRight: 5}}
@@ -387,34 +410,59 @@ export default function CommentsScreen({ navigation }) {
       </View> 
     )
   }
+  const updateComments = (item, index, like, dislike, likeNum, dislikeNum) => {
+      // update comments start
+      const FLOAD = [];
+      for (let i = 0; i <index; i++) FLOAD.push(allComments[i]); 
+      FLOAD.push(      {
+        id: item.id,
+        login: item.login,
+        comment: item.comment,
+        upvotes: item.upvotes + likeNum,
+        downvotes: item.downvotes + dislikeNum,
+        like: like,
+        dislike: dislike,
+      }); 
+      for (let i = index+1; i < allComments.length; i++) FLOAD.push(allComments[i]); 
+      setComments(FLOAD);
+      // update comments end
+  }
+
   // add coment like and dislike start
-  const likeComment = async (replyId, likeS, dislikeS) => {
+  const likeComment = async (item, replyId, likeS, dislikeS, index) => {
     // change to neutral start
+    const FLOAD = [];
     if (likeS === true) {
+      updateComments(item, index, false, false, -1, 0);
       await neutralStatus(replyId, "comment");
     } else if (dislikeS === true) {
+      updateComments(item, index, true, false, 1, -1);
       await neutralStatus(replyId, "comment");
       await likeStatus(replyId, "comment");
     } else {
+      updateComments(item, index, true, false, 1, 0);
       await likeStatus(replyId, "comment");
     }
-    loadComments();
+    //loadComments();
   }
-  const dislikeComment = async (replyId, likeS, dislikeS) => {
+  const dislikeComment = async (item, replyId, likeS, dislikeS, index) => {
     // change to neutral start
     if (dislikeS === true) {
+      updateComments(item, index, false, false, 0, -1);
       await neutralStatus(replyId, "comment");
     } else if (likeS === true) {
+      updateComments(item, index, false, true, -1, 1);
       await neutralStatus(replyId, "comment");
       await dislikeStatus(replyId, "comment");
     } else {
+      updateComments(item, index, false, true, 0, 1);
       await dislikeStatus(replyId, "comment");
     }
-    loadComments();
+    //loadComments();
   }
   // add coment like and dislike end
   //coment flat list stuf start
-  const renderComment = ({ item }) => {
+  const renderComment = ({ item, index }) => {
     //const backgroundColor = item.id === currentID ? "#6e3b6e" : "#f9c2ff";
     const show = item.id === currentID ? true : false;
     const replieNum = 0 === allReplies.length ? false : true;
@@ -425,7 +473,7 @@ export default function CommentsScreen({ navigation }) {
         </View>
         <Text style={styles.bodyOfComment}>{item.comment}</Text>
         <View style={styles.row}>
-          <TouchableOpacity onPress={() => likeComment(item.id, item.like, item.dislike)}>
+          <TouchableOpacity onPress={() => likeComment(item, item.id, item.like, item.dislike, index)}>
             {item.like ? (
               <Image
               style={{ marginRight: 5 }}
@@ -439,7 +487,7 @@ export default function CommentsScreen({ navigation }) {
               />}
           </TouchableOpacity>
           <Text >{item.upvotes} </Text>
-          <TouchableOpacity onPress={() => dislikeComment(item.id, item.like, item.dislike)}>
+          <TouchableOpacity onPress={() => dislikeComment(item, item.id, item.like, item.dislike, index)}>
             {item.dislike ? (
               <Image
               style={{ marginLeft: 15, marginRight: 5}}
