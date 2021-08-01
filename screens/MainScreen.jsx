@@ -40,7 +40,7 @@ export default function MainScreen({ navigation }) {
   const [postId, setPostId] = useState("");
 
   // placeholder setPers
-  setPersistantData("postId", "60eca4049a0c8f0015b69b56");
+  //setPersistantData("postId", "60eca4049a0c8f0015b69b56");
   //const [postId, setPostId] = useState("");
   getPersistantData("postId");
 
