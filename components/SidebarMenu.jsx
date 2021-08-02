@@ -44,7 +44,7 @@ const SidebarMenu = (props) => {
       <DrawerContentScrollView {...props}>
         {/* <DrawerItemList {...props} /> */}
         <DrawerItem
-          label="POSTS"
+          label="POST HISTORY"
           onPress={() =>
             props.navigation.navigate("mainScreenStack", { screen: "Posts" })
           }
