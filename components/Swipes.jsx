@@ -37,7 +37,7 @@ function Swipes({ swipesRef, handleLike, handleDislike}) {
 
     const [willLike, setWillLike] = useState(false)
     const [willPass, setWillPass] = useState(false)
-    const [currPost, setPost] = useState({postID: "postID", author: "Author", Title: "Title", score: "Score", Image: "https://i.imgur.com/bDllXgq.jpeg",});
+    const [currPost, setPost] = useState({postID: "postID", author: "Author", Title: "Title", score: "Score", Image: "https://i.imgur.com/PgSKex0.png",});
 
     const renderLeftActions = () => {
         return (
@@ -277,3 +277,5 @@ function Swipes({ swipesRef, handleLike, handleDislike}) {
   })
 
   export default React.forwardRef((props, ref) => <Swipes swipesRef={ref} {...props}></Swipes>)
+  
+  
