@@ -21,7 +21,7 @@ import MainScreen from "./screens/MainScreen";
 import PostScreen from "./screens/PostScreen";
 import ForgetPasswordScreen from "./screens/ForgetPasswordScreen";
 import AddPostScreen from "./screens/AddPostScreen";
-import YourPostScreen from "./screens/YourPostScreen";
+import YourPostScreen from "./screens/YourPost";
 // Add Post Button
 import { HeaderButton } from "./components/AddPostButton";
 import CommentsScreen from "./screens/CommentsScreen";
