@@ -22,6 +22,7 @@ import { setPersistantData } from "../context/Storage";
 export default function PostScreen({ navigation }) {
   const [isLoading, setLoading] = useState(true);
   const [Array, setArray] = useState([]);
+  const [length, setLength] = useState("0");
 
   useEffect(() => {
     getPostHelper();
@@ -84,6 +85,7 @@ export default function PostScreen({ navigation }) {
 
       const result = await JSON.parse(await response.text());
       const length = result.data.userPosts.length;
+	  setLength(length);
       for (let i = 0; i < length; i++) {
           ARRAY.push({
           picture: result.data.userPosts[i].Image,
@@ -135,12 +137,22 @@ export default function PostScreen({ navigation }) {
       </View>
     );
   }
+  
+  if(length > 0){
   return (
     <View style={styles.container}>
       <FlatList data={Array} renderItem={renderPost} />
     </View>
   );
-}
+  }
+  
+  return (
+		<View style={styles.container}>
+		    <Text>You have no posts.</Text>
+		</View>
+	);
+	
+  }
 
 const styles = StyleSheet.create({
   container: {
