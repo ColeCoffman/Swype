@@ -109,9 +109,10 @@ export default function PostScreen({ navigation }) {
       <View>
         <TouchableOpacity
           onPress={async () => {
+            setPersistantData("usersImage", item.picture);
             setPersistantData("postId", item.id);
-            setPersistantData("newComments", "1");
-            navigation.navigate("mainScreenStack", { screen: "Comments" });
+            //setPersistantData("newComments", "1");
+            navigation.navigate("mainScreenStack", { screen: "YourPost" });
           }}
         >
 		  
